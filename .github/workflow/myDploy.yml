@@ -1,0 +1,144 @@
+name: last nset build # 현재 제목
+
+on: # 이벤트를 등록
+  push: # push 이벤트가 발생하면
+    branches: # branches 어떤 브랜치에 이벤트가 일어났을 대 작업을 동작
+      - master
+
+  pull_request:
+    branches:
+      - master
+
+jobs: # 작업의 단위
+  kimBuild: # 식별자
+    runs-on: ubuntu-latest # 러너에서 사용할 os latest 최신 버전 사용하겠다.
+
+    steps: # 작업의 가장 작은 단위
+      - name: checkout # 작업의 작은 단위의 이름
+        uses: actions/checkout@v4 # 레파지토리 체크아웃 할 수 있게 도와주는 라이브러리
+        # 브랜치에 있는 내용을 클론해온다. 워크 플로우에
+
+      - name: set up node # uses 라이브러리를 사용할 것을 가져오고 with는 라이브러리의 속성설정
+        uses: actions/setup-node@v4 # 노드버전을 가져오고
+        with:
+          node-version: "20" # 20 버전의 노드 런타임 환경을 제공
+
+      # 가상머신의 경로는 /home/runner
+      # runner는 가상머신의 이름으로 os는 똑같고 그 안에 work 디렉터리 위에서 동작한다.
+      - name: test # 의존성 설치하기 전에 폴더 구조 확인
+        run: |
+          ls 
+          pwd
+
+      - name: npm install
+        run: |
+          cd myApp
+          npm install
+
+      - name: build nest
+        run: |
+          cd myApp
+          npm run build
+
+      - name: build test
+        run: |
+          ls
+          pwd
+          cd myApp/dist
+          ls
+          pwd
+
+      - name: env create
+        run: |
+          echo ${{secrets.ENV}} > .env
+
+      # 러너에 빌드된 파일과 의존성들이 있는 상태 빌드 서버
+      # 운영 배포 서버에 전송해줘야한다
+      - name: upload build
+        uses: actions/upload-artifact@v4 # 빌드 결과물 저장 , 빌드 된 바이너리 패키지
+        with:
+          name: build-artifacts
+          path: | # path가 아티팩트에 저장할 폴더나 파일들의 경로
+            myApp/dist/
+            package.json
+            package-lock.json
+            system.config.js
+            .env
+
+      # 운영 서버에 전송 ec2에 파일 전송
+      # >는 출력의 내용을 파일로 저장
+      # >> 파일이 있으면 기존 내용에 추가
+      # ssh_keyscan : ssh 요청을 보낼때 호스트의 키를 가져와라
+      # H 옵션 : 호스트 이름을 해시화해서 출력
+      # run : 러너 가상 머신에서 실행될 쉘 스크립트
+      - name: ssh 접근할 키파일 생성
+        run:
+          | # .ssh 폴더가 있어도 에러를 발생시키지 않는다. 부모 디렉터리 생성, 부모 디렉터리 생성
+          mkdir -p ~/.ssh
+          ls -al
+          pwd
+          echo "${{secrets.AWS_SECRET_KEY}}" > ~/.ssh/aws_key
+          chmod 600 ~/.ssh/aws_key
+          ssh-keyscan -H ${{secrets.HOST}} > ~/.ssh/known_hosts
+          cat ~/.ssh/known_hosts
+
+      # 배포 준비단계 배포하기 전에 생성할 폴더 및 파일 확인
+      # script는 ec2 운영서버에서 실행시킬 쉘 스크립트내용
+      - name: ec2 deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{secrets.HOST}}
+          username: ${{secrets.USERNAME}}
+          key: ${{secrets.AWS_SECRET_KEY}}
+          port: ${{secrets.PORT}}
+          script: |
+            cd /home/ubuntu/myApp/myApp
+            rm -rf dist
+            mkdir dist
+            rm -rf package.json
+            rm -rf package-lock.json
+            rm -rf system.config.js
+            rm -rf .env
+
+      - name: EC2에 아티펙트 복사
+        run:
+          | # scp 파일을 복사하기 위한 명령 -r 폴더를 재귀적으로 복사 -i ssh 연결을 설정할 때 사용하는 키파일을 지정
+          ls
+          pwd
+          ls myApp
+          echo "===="
+          ls myApp/dist
+          echo "===="
+          scp -r -i ~/.ssh/aws_key myApp/dist/* ${{secrets.USERNAME}}@${{secrets.HOST}}:/home/ubuntu/dist
+          scp -i ~/.ssh/aws_key myApp/package.json ${{secrets.USERNAME}}@${{secrets.HOST}}:/home/ubuntu
+          scp -i ~/.ssh/aws_key myApp/package-lock.json ${{secrets.USERNAME}}@${{secrets.HOST}}:/home/ubuntu
+          scp -i ~/.ssh/aws_key myApp/system.config.js ${{secrets.USERNAME}}@${{secrets.HOST}}:/home/ubuntu
+          scp -i ~/.ssh/aws_key myApp/.env ${{secrets.USERNAME}}@${{secrets.HOST}}:/home/ubuntu
+
+      - name: EC2 npm install
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{secrets.HOST}}
+          username: ${{secrets.USERNAME}}
+          key: ${{secrets.AWS_SECRET_KEY}}
+          port: ${{secrets.PORT}}
+          script: |
+            cd /home/ubuntu/myApp
+            ls
+            pwd
+            npm install
+
+      - name: deploy to ec2
+        uses: appleboy/ssh-action@v1.0.3 # kill을 하면 서버가 중단된다.
+        ## 무중단 배포
+        ## pm2 reload 애플리케이션이 중단없이 새로운 코드의 내용을 다시 가져온다.
+        with:
+          host: ${{secrets.HOST}}
+          username: ${{secrets.USERNAME}}
+          key: ${{secrets.AWS_SECRET_KEY}}
+          port: ${{secrets.PORT}}
+          script: |
+            cd /home/ubuntu/myApp
+            pm2 reload system.config.js --env production
+          # npm으로 실행하면 dev로 실핼하더도 한번 실행하고 끝
+          # pm2로 실행하면 백그라운드로 계속 실행하기 때문에 pm2로 유지시켜줘야한다.
