@@ -10,7 +10,7 @@ on: # 이벤트를 등록
       - master
 
 jobs: # 작업의 단위
-  kimBuild: # 식별자
+  erganiBuild: # 식별자
     runs-on: ubuntu-latest # 러너에서 사용할 os latest 최신 버전 사용하겠다.
 
     steps: # 작업의 가장 작은 단위
@@ -32,21 +32,11 @@ jobs: # 작업의 단위
 
       - name: npm install
         run: |
-          cd myApp
           npm install
 
       - name: build nest
         run: |
-          cd myApp
           npm run build
-
-      - name: build test
-        run: |
-          ls
-          pwd
-          cd myApp/dist
-          ls
-          pwd
 
       - name: env create
         run: |
@@ -59,7 +49,7 @@ jobs: # 작업의 단위
         with:
           name: build-artifacts
           path: | # path가 아티팩트에 저장할 폴더나 파일들의 경로
-            myApp/dist/
+            dist/
             package.json
             package-lock.json
             system.config.js
@@ -92,7 +82,7 @@ jobs: # 작업의 단위
           key: ${{secrets.AWS_SECRET_KEY}}
           port: ${{secrets.PORT}}
           script: |
-            cd /home/ubuntu/myApp/myApp
+            cd /home/ubuntu
             rm -rf dist
             mkdir dist
             rm -rf package.json
@@ -105,15 +95,11 @@ jobs: # 작업의 단위
           | # scp 파일을 복사하기 위한 명령 -r 폴더를 재귀적으로 복사 -i ssh 연결을 설정할 때 사용하는 키파일을 지정
           ls
           pwd
-          ls myApp
-          echo "===="
-          ls myApp/dist
-          echo "===="
-          scp -r -i ~/.ssh/aws_key myApp/dist/* ${{secrets.USERNAME}}@${{secrets.HOST}}:/home/ubuntu/dist
-          scp -i ~/.ssh/aws_key myApp/package.json ${{secrets.USERNAME}}@${{secrets.HOST}}:/home/ubuntu
-          scp -i ~/.ssh/aws_key myApp/package-lock.json ${{secrets.USERNAME}}@${{secrets.HOST}}:/home/ubuntu
-          scp -i ~/.ssh/aws_key myApp/system.config.js ${{secrets.USERNAME}}@${{secrets.HOST}}:/home/ubuntu
-          scp -i ~/.ssh/aws_key myApp/.env ${{secrets.USERNAME}}@${{secrets.HOST}}:/home/ubuntu
+          scp -r -i ~/.ssh/aws_key dist/* ${{secrets.USERNAME}}@${{secrets.HOST}}:/home/ubuntu/dist
+          scp -i ~/.ssh/aws_key package.json ${{secrets.USERNAME}}@${{secrets.HOST}}:/home/ubuntu
+          scp -i ~/.ssh/aws_key package-lock.json ${{secrets.USERNAME}}@${{secrets.HOST}}:/home/ubuntu
+          scp -i ~/.ssh/aws_key system.config.js ${{secrets.USERNAME}}@${{secrets.HOST}}:/home/ubuntu
+          scp -i ~/.ssh/aws_key .env ${{secrets.USERNAME}}@${{secrets.HOST}}:/home/ubuntu
 
       - name: EC2 npm install
         uses: appleboy/ssh-action@v1.0.3
@@ -123,7 +109,7 @@ jobs: # 작업의 단위
           key: ${{secrets.AWS_SECRET_KEY}}
           port: ${{secrets.PORT}}
           script: |
-            cd /home/ubuntu/myApp
+            cd /home/ubuntu
             ls
             pwd
             npm install
@@ -138,7 +124,7 @@ jobs: # 작업의 단위
           key: ${{secrets.AWS_SECRET_KEY}}
           port: ${{secrets.PORT}}
           script: |
-            cd /home/ubuntu/myApp
+            cd /home/ubuntu
             pm2 reload system.config.js --env production
           # npm으로 실행하면 dev로 실핼하더도 한번 실행하고 끝
           # pm2로 실행하면 백그라운드로 계속 실행하기 때문에 pm2로 유지시켜줘야한다.
