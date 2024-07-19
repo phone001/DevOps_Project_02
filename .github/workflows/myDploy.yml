@@ -40,7 +40,7 @@ jobs: # 작업의 단위
 
       - name: env create
         run: |
-          echo ${{secrets.ENV}} > .env
+          echo "${{secrets.ENV}}" > .env
 
       # 러너에 빌드된 파일과 의존성들이 있는 상태 빌드 서버
       # 운영 배포 서버에 전송해줘야한다
