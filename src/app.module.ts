@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize';
+import { PostModule } from './post/post.module';
 import * as cookie from 'cookie-parser';
 
 @Module({
@@ -15,7 +16,8 @@ import * as cookie from 'cookie-parser';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME
-    })
+    }),
+    PostModule
   ],
   controllers: [AppController],
   providers: [AppService],
