@@ -6,7 +6,7 @@ import { MulterModule } from '@nestjs/platform-express';
 @Module({
   imports: [
     MulterModule.registerAsync({
-      useClass: MulterConfigService,
+      useClass: UploadService,
     }),
   ],
   providers: [UploadService],
