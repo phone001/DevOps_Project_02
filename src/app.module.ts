@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize';
 import { UserModule } from './user/user.module';
+import { PostModule } from './post/post.module';
 import * as cookie from 'cookie-parser';
 
 @Module({
@@ -18,6 +19,7 @@ import * as cookie from 'cookie-parser';
       database: process.env.DB_NAME
     }),
     UserModule
+    PostModule
   ],
   controllers: [AppController],
   providers: [AppService],
