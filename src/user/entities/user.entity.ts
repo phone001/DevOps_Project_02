@@ -1,5 +1,5 @@
 import { Model, Table, DataType, Column, AutoIncrement, PrimaryKey, AllowNull, HasMany } from "sequelize-typescript";
-
+import { Post } from "src/post/model/post.model";
 
 @Table({
     modelName: "users",
