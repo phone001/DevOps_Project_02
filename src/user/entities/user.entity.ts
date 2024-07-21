@@ -1,5 +1,10 @@
 import { Model, Table, DataType, Column, AutoIncrement, PrimaryKey, AllowNull, HasMany } from "sequelize-typescript";
-import { Post } from "src/post/model/post.model";
+import { CommentLikes } from "src/comment-likes/entities/commentLikes.entity";
+import { Comment } from "src/comment/entities/comment.entity";
+import { PostLikes } from "src/post-likes/entities/postLikes.entity";
+import { Post } from "src/post/entities/post.entity";
+import { ReplyLikes } from "src/reply-likes/entitys/replyLikes.entity";
+import { Reply } from "src/reply/entities/reply.entity";
 
 @Table({
     modelName: "users",
