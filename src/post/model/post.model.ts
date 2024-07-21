@@ -1,5 +1,5 @@
 import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
-
+import { User } from '../../user/entities/user.entity';
 @Table({
     tableName: "post"
     , timestamps: true

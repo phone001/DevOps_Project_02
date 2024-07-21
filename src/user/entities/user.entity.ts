@@ -48,7 +48,6 @@ export class User extends Model {
     @HasMany(() => Post, {
         sourceKey: "id",
         foreignKey: "userId"
-
     })
     posts: Post[];
 
