@@ -18,7 +18,7 @@ import * as cookie from 'cookie-parser';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME
     }),
-    UserModule
+    UserModule,
     PostModule
   ],
   controllers: [AppController],
