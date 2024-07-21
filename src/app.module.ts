@@ -5,6 +5,11 @@ import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize';
 import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
+import { CommentModule } from './comment/comment.module';
+import { ReplyModule } from './reply/reply.module';
+import { PostLikesModule } from './post-likes/post-likes.module';
+import { CommentLikesModule } from './comment-likes/comment-likes.module';
+import { ReplyLikesModule } from './reply-likes/reply-likes.module';
 import * as cookie from 'cookie-parser';
 
 @Module({
@@ -19,7 +24,12 @@ import * as cookie from 'cookie-parser';
       database: process.env.DB_NAME
     }),
     UserModule,
-    PostModule
+    PostModule,
+    CommentModule,
+    ReplyModule,
+    PostLikesModule,
+    CommentLikesModule,
+    ReplyLikesModule
   ],
   controllers: [AppController],
   providers: [AppService],
