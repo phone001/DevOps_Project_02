@@ -7,8 +7,8 @@ import { ReplyLikes } from "src/reply-likes/entitys/replyLikes.entity";
 import { Reply } from "src/reply/entities/reply.entity";
 
 @Table({
-    modelName: "users",
-    tableName: "User",
+    // modelName: "users",
+    tableName: "user",
     timestamps: true,
     underscored: false
 })
