@@ -1,5 +1,5 @@
 export class CreatePost {
-    userId: string;
+    userId: number;
     title: string;
     content: string;
     imgPath: string;
