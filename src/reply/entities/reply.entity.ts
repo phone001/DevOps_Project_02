@@ -1,5 +1,6 @@
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
 import { Comment } from "src/comment/entities/comment.entity";
+import { ReplyLikes } from "src/reply-likes/entitys/replyLikes.entity";
 import { User } from "src/user/entities/user.entity";
 
 @Table({
@@ -26,4 +27,11 @@ export class Reply extends Model {
 
     @BelongsTo(() => Comment)
     comment: Comment;
+
+    @HasMany(() => ReplyLikes, {
+        sourceKey: "id",
+        foreignKey: "replyId",
+        onDelete: 'cascade'
+    })
+    replyLikes: ReplyLikes[];
 }

@@ -1,5 +1,7 @@
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
 import { User } from '../../user/entities/user.entity';
+import { PostLikes } from "src/post-likes/entities/postLikes.entity";
+import { Comment } from "src/comment/entities/comment.entity";
 @Table({
     tableName: "post"
     , timestamps: true
@@ -29,4 +31,20 @@ export class Post extends Model {
 
     @BelongsTo(() => User)
     user: User;
+
+
+    @HasMany(() => PostLikes, {
+        sourceKey: "id",
+        foreignKey: "postId",
+        onDelete: 'cascade'
+    })
+    postLikes: PostLikes[];
+
+    @HasMany(() => Comment, {
+        sourceKey: "id",
+        foreignKey: "postId",
+        onDelete: 'cascade'
+    })
+    comment: Comment[];
+
 }
