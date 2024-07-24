@@ -4,9 +4,19 @@ import { PostController } from './post.controller';
 import { CreatePost } from './dto/post.dto';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Post } from './entities/post.entity';
+import { JwtModule } from '@nestjs/jwt';
+import { UploadService } from './upload/upload.service';
+import { MulterModule } from '@nestjs/platform-express';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Post])],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    SequelizeModule.forFeature([Post]),
+    JwtModule.register({ secret: process.env.JWT_KEY }),
+    MulterModule.registerAsync({
+      useClass: UploadService,
+    })],
   controllers: [PostController],
   providers: [PostService, CreatePost],
 })

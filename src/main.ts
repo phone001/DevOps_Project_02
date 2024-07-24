@@ -10,7 +10,15 @@ async function bootstrap() {
   });
 
   // Swagger 설정
-  const config = new DocumentBuilder().setTitle("ergani API").setDescription("ergani api 문서입니다.").addTag("User").addTag("Post").addTag("Comment").addTag("Reply").addTag("PostLikes").addTag("CommentLikes").addTag("ReplyLikes").build();
+  const config = new DocumentBuilder().setTitle("ergani API").setDescription("ergani api 문서입니다.").addTag("User").addTag("Post").addTag("Comment").addTag("Reply").addTag("PostLikes").addTag("CommentLikes").addTag("ReplyLikes").addBearerAuth(
+    {
+      type: 'http',
+      scheme: 'bearer',
+      name: 'JWT',
+      in: 'header',
+    },
+    'access-token',
+  ).build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, document);

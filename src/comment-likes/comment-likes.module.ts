@@ -1,13 +1,16 @@
 import { Module } from '@nestjs/common';
 import { CommentLikesService } from './comment-likes.service';
 import { CommentLikesController } from './comment-likes.controller';
-import { CreateCommentLikes } from './dto/commentLikes.dto';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { CommentLikes } from './entities/commentLikes.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [SequelizeModule.forFeature([CommentLikes])],
+  imports: [
+    SequelizeModule.forFeature([CommentLikes]),
+    JwtModule.register({ secret: process.env.JWT_KEY })
+  ],
   controllers: [CommentLikesController],
-  providers: [CommentLikesService, CreateCommentLikes],
+  providers: [CommentLikesService],
 })
 export class CommentLikesModule { }
