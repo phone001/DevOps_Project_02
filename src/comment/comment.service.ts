@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Comment } from './entities/comment.entity';
 import { User } from 'src/user/entities/user.entity';
@@ -19,7 +19,7 @@ export class CommentService {
     async createComment(createComment: CreateComment, req: Request): Promise<Comment | BadRequestException> {
         try {
             const { postId, content } = createComment;
-            const token = req.cookies("token");
+            const token = req.cookies["token"];
             const { userId } = this.jwt.verify(token);
             return await this.commentModel.create({ postId, userId, content })
         } catch (error) {
@@ -41,8 +41,8 @@ export class CommentService {
                 }
                 likedUserId.push(e2.dataValues["userId"]);
             })
-            e.dataValues["postLikes"] = like;
-            e.dataValues["postDislikes"] = dislike;
+            e.dataValues["commentLikes"] = like;
+            e.dataValues["commentDislikes"] = dislike;
             e.dataValues["likedUserId"] = likedUserId;
         })
         return data;
@@ -72,14 +72,49 @@ export class CommentService {
         }
     }
 
-    // 댓글 수정
-    async updateCommentById(id: number): Promise<Comment> {
+    // comment id로 댓글 가져오기
+    async selectCommentById(id: number): Promise<Comment | BadRequestException> {
         try {
-            return
+            return await this.commentModel.findOne({ where: { id }, include: [User] });
         } catch (error) {
+            return new BadRequestException("comment request fail service selectCommentByPostId", { cause: error, description: error.message });
+        }
+    }
 
+
+    // 댓글 수정
+    async updateCommentById(id: number, req: Request): Promise<[affectedCount: number] | UnauthorizedException | BadRequestException> {
+        try {
+            const token = req.cookies["token"];
+            const { userId } = this.jwt.verify(token);
+
+            const data = this.selectCommentById(id);
+            if (data["dataValues"].user.dataValues.id !== userId) {
+                return new UnauthorizedException("작성자와 로그인된 유저 불일치");
+            }
+
+            const { content } = req.body;
+
+            return this.commentModel.update({ content }, { where: { id } });
+        } catch (error) {
+            return new BadRequestException("comment request fail service updateCommentById", { cause: error, description: error.message });
         }
     }
 
     // 댓글 삭제
+    async deleteCommentById(id: number, req: Request): Promise<number | UnauthorizedException | BadRequestException> {
+        try {
+            const token = req.cookies["token"];
+            const { userId } = this.jwt.verify(token);
+
+            const data = this.selectCommentById(id);
+            if (data["dataValues"].user.dataValues.id !== userId) {
+                return new UnauthorizedException("작성자와 로그인된 유저 불일치");
+            }
+
+            return this.commentModel.destroy({ where: { id } });
+        } catch (error) {
+            return new BadRequestException("comment request fail service deleteCommentById", { cause: error, description: error.message });
+        }
+    }
 }

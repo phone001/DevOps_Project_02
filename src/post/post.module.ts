@@ -18,7 +18,7 @@ import { ConfigModule } from '@nestjs/config';
       useClass: UploadService,
     })],
   controllers: [PostController],
-  providers: [PostService, CreatePost, UploadService],
+  providers: [PostService, CreatePost],
 })
 // providers에 CreatePost 주입 해야 하나요? 안해도 되는거죠?
 // providers가 해주는 일?

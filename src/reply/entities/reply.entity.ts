@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
 import { Comment } from "src/comment/entities/comment.entity";
 import { ReplyLikes } from "src/reply-likes/entitys/replyLikes.entity";

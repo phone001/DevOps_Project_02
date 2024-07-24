@@ -19,10 +19,10 @@ export class PostService {
 
     // 게시글 생성
 
-    async createPost(createPost: CreatePost, req: Request, imgPath: string): Promise<Post | BadRequestException> {
+    async createPost(createPost: CreatePost, req: Request): Promise<Post | BadRequestException> {
         try {
-            const { title, content } = createPost
-            const token = req.cookies("token");
+            const { title, content, imgPath } = createPost
+            const token = req.cookies["token"];
             const { userId } = this.jwt.verify(token);
 
             // 아마 이미지 없으면 에러날지도? 에러 난다면 다시 작업
@@ -86,7 +86,7 @@ export class PostService {
     // 유저 아이디로 글 한개 조회(글이 존재하는가?)
     async selectPostByUserIdOnce(req: Request): Promise<Post | BadRequestException> {
         try {
-            const token = req.cookies("token");
+            const token = req.cookies["token"];
             const { userId } = this.jwt.verify(token);
             return await this.postModel.findOne({ where: { userId } });
         } catch (error) {
@@ -97,7 +97,7 @@ export class PostService {
     // 마이페이지에서 해당 유저가 작성한 글 전체 가져오기
     async selectPostByUserId(req: Request): Promise<Post[] | BadRequestException | NotFoundException> {
         try {
-            const token = req.cookies("token");
+            const token = req.cookies["token"];
             const { userId } = this.jwt.verify(token);
 
             const isExist = await this.selectPostByUserIdOnce(userId);
@@ -139,10 +139,10 @@ export class PostService {
 
 
     // 수정
-    async updatePostById(id: number, req: Request, imgPath: string): Promise<[affectedCount: number] | UnauthorizedException | BadRequestException> {
+    async updatePostById(id: number, req: Request, updatePost: CreatePost): Promise<[affectedCount: number] | UnauthorizedException | BadRequestException> {
         try {
             // 작성자와 jwt토큰의 유저 정보가 일치하는지 확인해야함(서비스로직? or pipe?)
-            const token = req.cookies("token");
+            const token = req.cookies["token"];
             const { userId } = this.jwt.verify(token);
 
             const data = await this.selectPostById(id);
@@ -150,7 +150,7 @@ export class PostService {
                 return new UnauthorizedException("작성자와 로그인된 유저 불일치");
             }
 
-            const { title, content } = req.body;
+            const { title, content, imgPath } = updatePost;
 
             // 이미지 없이 요청 시 에러발생 혹은 if문을 안타서 이미지 파일이 삭제될 가능성 있음 확인하기
             if (!imgPath) {
@@ -158,7 +158,7 @@ export class PostService {
             }
 
             // 수정시 수정전 이미지 삭제
-            fs.rm(`src/static${data["dataValues"].user.dataValues.imgPath}`, (err) => {
+            fs.rm(`/src/static${data["dataValues"].user.dataValues.imgPath}`, (err) => {
                 if (err) {
                     console.log(err);
                 }
@@ -173,7 +173,7 @@ export class PostService {
     // 삭제
     async deletePostById(id: number, req: Request): Promise<number | BadRequestException | UnauthorizedException> {
         try {
-            const token = req.cookies("token");
+            const token = req.cookies["token"];
             const { userId } = this.jwt.verify(token);
 
             const data = await this.selectPostById(id);
@@ -182,7 +182,7 @@ export class PostService {
             }
 
             // 삭제시 저장된 이미지도 삭제
-            fs.rm(`src/static${data["dataValues"].imgPath}`, (err) => {
+            fs.rm(`/src/static${data["dataValues"].imgPath}`, (err) => {
                 if (err) {
                     console.log(err);
                 }
