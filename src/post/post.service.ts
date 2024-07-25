@@ -34,22 +34,27 @@ export class PostService {
     }
 
     // 좋아요 싫어요 로직
-    async likeDislikeCalc(data: any) {
+    async likeDislikeCalcForPostArr(data: any) {
         data.forEach((e) => {
             let like = 0;
             let dislike = 0;
             const likedUserId = []
+            const dislikedUserId = [];
+            console.log(e.dataValues);
             e.dataValues["postLikes"].forEach((e2) => {
                 if (e2.dataValues["likes"]) {
+                    console.log(e.dataValues["likes"]);
                     like++
+                    likedUserId.push(e2.dataValues["userId"]);
                 } else {
                     dislike++
+                    dislikedUserId.push(e2.dataValues["userId"]);
                 }
-                likedUserId.push(e2.dataValues["userId"]);
             })
             e.dataValues["postLikes"] = like;
             e.dataValues["postDislikes"] = dislike;
             e.dataValues["likedUserId"] = likedUserId;
+            e.dataValues["dislikedUserId"] = dislikedUserId;
         })
         return data;
     }
@@ -66,6 +71,40 @@ export class PostService {
         }
     }
 
+    async likeDislikeCalcForPost(data: any) {
+        const postLikes = data.dataValues.postLikes;
+        console.log(postLikes)
+        let like = 0;
+        let dislike = 0;
+        const likedUserId = [];
+        const dislikedUserId = [];
+        postLikes.forEach(el => {
+            if (el.dataValues.likes) {
+                like++;
+                likedUserId.push(el.dataValues.userId);
+            } else {
+                dislike++;
+                dislikedUserId.push(el.dataValues.userId);
+            }
+        });
+        data.dataValues.postLikes = like;
+        data.dataValues.postDisLikes = dislike;
+        data.dataValues.likedUserId = likedUserId;
+        data.dataValues.dislikedUserId = dislikedUserId;
+        return data
+    }
+
+    // id로 해당 글 가져오기(random)
+    selectPostByIdForRandom = async (id: number): Promise<Post | BadRequestException> => {
+        try {
+            const data = await this.postModel.findOne({ where: { id }, include: [User, PostLikes] });
+            // console.log(data);
+            return this.likeDislikeCalcForPost(data);
+        } catch (error) {
+            return new BadRequestException("post request fail service selectPostById", { cause: error, description: error.message });
+        }
+    }
+
     // id로 10개씩 가져오기
     selectPostByIdLimitTen = async (id: number): Promise<Post[] | BadRequestException | NotFoundException> => {
         try {
@@ -75,7 +114,7 @@ export class PostService {
                 return new NotFoundException("post not exist");
             }
             const data = await this.postModel.findAll({ where: { id: { [Op.gte]: id } }, limit: 10, include: [User, PostLikes] });
-            return this.likeDislikeCalc(data);
+            return this.likeDislikeCalcForPostArr(data);
 
         } catch (error) {
             // 400
@@ -131,7 +170,7 @@ export class PostService {
             }
 
             const data = await this.postModel.findAll({ where: { title: { [Op.like]: `%${searchTarget}%` } }, limit: 10, include: [User, PostLikes] });
-            return this.likeDislikeCalc(data);
+            return this.likeDislikeCalcForPostArr(data);
         } catch (error) {
             return new BadRequestException("post request fail service selectPostBySearchTargetLimitTen", { cause: error, description: error.message });
         }
