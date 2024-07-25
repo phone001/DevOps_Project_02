@@ -40,10 +40,10 @@ export class PostController {
 
   // 글 조회
   @Get("/:id")
-  @ApiOperation({ summary: '게시글 조회', description: "userId는 JWT복호화해 사용" })
-  async selectPostByIdLimitTen(@Param("id", new PostIdIsNumber) postId: number) {
+  @ApiOperation({ summary: '게시글 조회' })
+  async selectPostByIdForRandom(@Param("id", new PostIdIsNumber) postId: number) {
     try {
-      return await this.postService.selectPostByIdLimitTen(postId);
+      return await this.postService.selectPostByIdForRandom(postId);
     } catch (error) {
       return new BadRequestException("post request fail controller selectPostByIdLimitTen", { cause: error, description: error.message });
     }
@@ -100,7 +100,7 @@ export class PostController {
       // const imgPath = "/imgs/post/" + ;
 
       if (file) {
-        updatePostDTO.imgPath = file.filename;
+        updatePostDTO.imgPath = "/imgs/post/" + file.filename;
       } else {
         updatePostDTO.imgPath = null;
       }

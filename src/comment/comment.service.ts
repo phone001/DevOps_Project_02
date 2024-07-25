@@ -33,17 +33,20 @@ export class CommentService {
             let like = 0;
             let dislike = 0;
             const likedUserId = []
+            const dislikedUserId = [];
             e.dataValues["commentLikes"].forEach((e2) => {
                 if (e2.dataValues["likes"]) {
                     like++
+                    likedUserId.push(e2.dataValues["userId"]);
                 } else {
                     dislike++
+                    dislikedUserId.push(e2.dataValues["userId"]);
                 }
-                likedUserId.push(e2.dataValues["userId"]);
             })
             e.dataValues["commentLikes"] = like;
             e.dataValues["commentDislikes"] = dislike;
             e.dataValues["likedUserId"] = likedUserId;
+            e.dataValues["dislikedUserId"] = dislikedUserId;
         })
         return data;
     }
