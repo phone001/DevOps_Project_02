@@ -3,14 +3,13 @@ import * as multer from 'multer';
 import * as path from 'path';
 import * as fs from 'fs';
 import { MulterOptionsFactory } from '@nestjs/platform-express';
-
 @Injectable()
-export class UploadService1 implements MulterOptionsFactory {
+export class UploadService implements MulterOptionsFactory {
     dirPath: string;
     constructor() {
-        this.dirPath = path.join(process.cwd(), 'uploads');
+        this.dirPath = path.join(process.cwd(), "src", "static", "imgs", "user");
+        //this.dirPath = path.join(process.cwd(), "user");
         this.mkdir();
-        this.createMulterOptions();
     }
 
     mkdir() {
@@ -31,7 +30,7 @@ export class UploadService1 implements MulterOptionsFactory {
 
                 filename(req, file, done) {
                     const ext = path.extname(file.originalname);
-                    const name = path.basename(file.originalname, ext);
+                    const name = path.basename(file.originalname, ext)
                     done(null, `${name}_${Date.now()}${ext}`);
                 },
             }),

@@ -11,36 +11,51 @@ import { PostLikesModule } from './post-likes/post-likes.module';
 import { CommentLikesModule } from './comment-likes/comment-likes.module';
 import { ReplyLikesModule } from './reply-likes/reply-likes.module';
 import * as cookie from 'cookie-parser';
+import { UploadModule } from './upload/upload.module';
+import { ServeStaticModule } from "@nestjs/serve-static"
+import { join } from "path";
+import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
+
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    // SequelizeModule.forRoot({
-    //   dialect: "mysql",
-    //   host: "localhost",
-    //   port: parseInt(process.env.DB_PORT),
-    //   username: process.env.DB_USERNAME,
-    //   password: process.env.DB_PASSWORD,
-    //   database: process.env.DB_NAME
-    // }),
     SequelizeModule.forRoot({
       dialect: "mysql",
       host: "localhost",
-      port: 3306,
-      username: "root",
-      password: "root",
-      database: "test",
+      port: parseInt(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       autoLoadModels: true,
       synchronize: true
     }),
+    // SequelizeModule.forRoot({
+    //   dialect: "mysql",
+    //   host: "localhost",
+    //   port: 3306,
+    //   username: "root",
+    //   password: "",
+    //   database: "test",
+    //   autoLoadModels: true,
+    //   synchronize: true
+    // }),
     UserModule,
     PostModule,
     CommentModule,
     ReplyModule,
     PostLikesModule,
     CommentLikesModule,
-    ReplyLikesModule
-  ],
+    ReplyLikesModule,
+    UploadModule,
+    AuthModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, "static")
+    }), JwtModule.register({
+      secret: process.env.JWT_KEY,
+      signOptions: { expiresIn: "60m" }
+    })],
   controllers: [AppController],
   providers: [AppService],
 })
