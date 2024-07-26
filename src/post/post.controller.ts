@@ -43,16 +43,18 @@ export class PostController {
     }
   }
 
-  // 글 조회
-  @Get("/:id")
-  @ApiOperation({ summary: '게시글 조회' })
-  async selectPostByIdForRandom(@Param("id", new PostIdIsNumber) postId: number) {
+
+  // 게시글 id 조회
+  @Get("/postCount")
+  @ApiOperation({ summary: '게시글 id 조회' })
+  async selectPostCount() {
     try {
-      return await this.postService.selectPostByIdForRandom(postId);
+      return await this.postService.selectPostCount();
     } catch (error) {
-      return new BadRequestException("post request fail controller selectPostByIdLimitTen", { cause: error, description: error.message });
+      return new BadRequestException("post request fail controller selectPostCount", { cause: error, description: error.message });
     }
   }
+
 
   // 유저 아이디로 글 조회
   @Get("findPostByUser")
@@ -84,6 +86,17 @@ export class PostController {
       return new BadRequestException("post request fail controller selectPostBySearchTargetLimitTen", { cause: error, description: error.message });
     }
 
+  }
+
+  // 글 조회
+  @Get("/:id")
+  @ApiOperation({ summary: '게시글 조회' })
+  async selectPostByIdForRandom(@Param("id", new PostIdIsNumber) postId: number) {
+    try {
+      return await this.postService.selectPostByIdForRandom(postId);
+    } catch (error) {
+      return new BadRequestException("post request fail controller selectPostByIdLimitTen", { cause: error, description: error.message });
+    }
   }
 
   // 글 수정
