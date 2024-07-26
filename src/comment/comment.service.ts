@@ -68,7 +68,7 @@ export class CommentService {
                 return new NotFoundException("해당 게시글의 댓글 없음");
             }
 
-            const data = await this.commentModel.findAll({ where: { postId }, limit: 20, include: [User, CommentLikes] });
+            const data = await this.commentModel.findAll({ where: { postId }, limit: 10, include: [User, CommentLikes] });
             return this.likeDislikeCalc(data);
         } catch (error) {
             return new BadRequestException("comment request fail service selectCommentByPostIdLimitTen", { cause: error, description: error.message });
@@ -91,14 +91,14 @@ export class CommentService {
             const token = req.cookies["token"];
             const { userId } = this.jwt.verify(token);
 
-            const data = this.selectCommentById(id);
+            const data = await this.selectCommentById(id);
             if (data["dataValues"].user.dataValues.id !== userId) {
                 return new UnauthorizedException("작성자와 로그인된 유저 불일치");
             }
 
             const { content } = req.body;
 
-            return this.commentModel.update({ content }, { where: { id } });
+            return await this.commentModel.update({ content }, { where: { id } });
         } catch (error) {
             return new BadRequestException("comment request fail service updateCommentById", { cause: error, description: error.message });
         }
@@ -110,12 +110,12 @@ export class CommentService {
             const token = req.cookies["token"];
             const { userId } = this.jwt.verify(token);
 
-            const data = this.selectCommentById(id);
+            const data = await this.selectCommentById(id);
             if (data["dataValues"].user.dataValues.id !== userId) {
                 return new UnauthorizedException("작성자와 로그인된 유저 불일치");
             }
 
-            return this.commentModel.destroy({ where: { id } });
+            return await this.commentModel.destroy({ where: { id } });
         } catch (error) {
             return new BadRequestException("comment request fail service deleteCommentById", { cause: error, description: error.message });
         }

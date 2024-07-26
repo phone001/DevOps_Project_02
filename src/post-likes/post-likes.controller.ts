@@ -23,18 +23,20 @@ export class PostLikesController {
       const token = req.cookies["token"];
       const { userId } = this.jwt.verify(token);
 
-      const isExist = this.postLikesService.selectPostLikesByPostIdUserId(postId, userId);
+      const isExist = await this.postLikesService.selectPostLikesByPostIdUserId(postId, userId);
+      console.log(isExist);
+
 
       // post-likes테이블에 존재하는지 확인 후 없으면 생성
       if (!isExist) {
-        return this.postLikesService.createPostLikes(postId, userId, true);
+        return await this.postLikesService.createPostLikes(postId, userId, true);
       }
 
       // like 컬럼 true false판단 후 수정, 삭제
       if (isExist["dataValues"].likes) {
-        return this.postLikesService.deletePostLikesByPostIdUserId(postId, userId);
+        return await this.postLikesService.deletePostLikesByPostIdUserId(postId, userId);
       } else {
-        return this.postLikesService.updatePostLikesByPostIdUserId(postId, userId, true);
+        return await this.postLikesService.updatePostLikesByPostIdUserId(postId, userId, true);
       }
 
     } catch (error) {
@@ -50,18 +52,18 @@ export class PostLikesController {
       const token = req.cookies["token"];
       const { userId } = this.jwt.verify(token);
 
-      const isExist = this.postLikesService.selectPostLikesByPostIdUserId(postId, userId);
+      const isExist = await this.postLikesService.selectPostLikesByPostIdUserId(postId, userId);
 
       // post-likes테이블에 존재하는지 확인 후 없으면 생성
       if (!isExist) {
-        return this.postLikesService.createPostLikes(postId, userId, false);
+        return await this.postLikesService.createPostLikes(postId, userId, false);
       }
 
       // like 컬럼 true false판단 후 수정, 삭제
       if (!isExist["dataValues"].likes) {
-        return this.postLikesService.deletePostLikesByPostIdUserId(postId, userId);
+        return await this.postLikesService.deletePostLikesByPostIdUserId(postId, userId);
       } else {
-        return this.postLikesService.updatePostLikesByPostIdUserId(postId, userId, false);
+        return await this.postLikesService.updatePostLikesByPostIdUserId(postId, userId, false);
       }
 
     } catch (error) {

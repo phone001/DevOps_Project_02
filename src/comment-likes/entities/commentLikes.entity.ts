@@ -17,8 +17,13 @@ export class CommentLikes extends Model {
     @Column
     userId: number;
 
+
     @BelongsTo(() => User)
     user: User
+
+    @ForeignKey(() => User)
+    @Column
+    commentId: number;
 
     @ForeignKey(() => Comment)
     comment: Comment

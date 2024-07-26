@@ -28,7 +28,7 @@ export class UserService {
 
   async createSotial(userDTO: CreateUserDto, token: string) {
     let user = null;
-    if (userDTO.oauthType == 'kakao') {
+    if (userDTO.oauthType == 'kakao' && token) {
       const { data: { id, properties } } = await axios.get("https://kapi.kakao.com/v2/user/me", {
         headers: {
           "Authorization": `Bearer ${token}`
@@ -41,8 +41,8 @@ export class UserService {
         imgPath: userDTO["imgPath"] ? userDTO["imgPath"] : properties.profile_image,
         oauthType: userDTO.oauthType
       }
-    } else {
-      console.log(token)
+    } else if (userDTO.oauthType == 'google' && token) {
+
       const { data: { email, name, id, picture } } = await axios.get("https://www.googleapis.com/oauth2/v2/userinfo", {
         headers: {
           "Authorization": `Bearer ${token}`

@@ -18,6 +18,7 @@ export class UserController {
   @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
+      type: "object",
       properties: {
         loginId: { type: "string" },
         password: { type: "string" },
@@ -55,11 +56,11 @@ export class UserController {
   })
   async signIn(@Body('loginId') id: string, @Body("password") password: string, @Body("oauthType") oauthType: string, @Res() res: Response) {
     const token = await this.userService.signIn(id, password, oauthType, null);
+    console.log(`jwt 토큰 : ${token}`);
     if (token) {
       const date = new Date();
       date.setMinutes(date.getMinutes() + 60);
       res.cookie("token", token, { httpOnly: true, expires: date });
-      console.log(res)
       return res.redirect("http://localhost:8000");
     } else {
       res.setHeader("content-type", "text/html");
@@ -69,9 +70,6 @@ export class UserController {
 
   @Post("logout")
   @ApiOperation({ summary: "로그아웃" })
-  @ApiHeader({
-    s
-  })
   async logout(@Req() req: Request, @Res() res: Response) {
     const { token } = req.cookies;
     console.log(token)

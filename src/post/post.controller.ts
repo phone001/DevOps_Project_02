@@ -23,7 +23,7 @@ export class PostController {
       properties: {
         title: { type: "string" },
         content: { type: "string" },
-        image: { type: "string", format: "binary" }
+        file: { type: "string", format: "binary" }
       }
     },
     description: "imgPath는 멀터가 처리중"
@@ -33,7 +33,7 @@ export class PostController {
     try {
       // const imgPath = "/imgs/post/" + file.filename;
       if (file) {
-        createPostDTO.imgPath = file.filename;
+        createPostDTO.imgPath = "/imgs/post/" + file.filename;
       } else {
         createPostDTO.imgPath = null;
       }
@@ -89,11 +89,14 @@ export class PostController {
   // 글 수정
   @Put("/:id")
   @ApiOperation({ summary: '게시글 수정', description: "게시글 id로 수정" })
+  @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
+      type: "object",
       properties: {
         title: { type: "string" },
         content: { type: "string" },
+        file: { type: "string", format: "binary" }
       }
     },
     description: "imgPath는 멀터가 처리중"
