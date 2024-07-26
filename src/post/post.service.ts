@@ -196,7 +196,7 @@ export class PostService {
             }
 
             // 수정시 수정전 이미지 삭제
-            fs.rm(`/src/static${data["dataValues"].user.dataValues.imgPath}`, (err) => {
+            fs.rm(`src/static${data["dataValues"]["imgPath"]}`, (err) => {
                 if (err) {
                     console.log(err);
                 }
@@ -220,7 +220,7 @@ export class PostService {
             }
 
             // 삭제시 저장된 이미지도 삭제
-            fs.rm(`/src/static${data["dataValues"].imgPath}`, (err) => {
+            fs.rm(`src/static${data["dataValues"].imgPath}`, (err) => {
                 if (err) {
                     console.log(err);
                 }

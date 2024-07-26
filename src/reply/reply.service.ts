@@ -68,7 +68,7 @@ export class ReplyService {
                 return new NotFoundException("해당 댓글의 대댓글 없음");
             }
 
-            const data = await this.replyModel.findAll({ where: { commentId }, limit: 20, include: [User, ReplyLikes] });
+            const data = await this.replyModel.findAll({ where: { commentId }, limit: 10, include: [User, ReplyLikes] });
             return this.likeDislikeCalc(data);
         } catch (error) {
             return new BadRequestException("reply request fail service selectReplyByCommentIdLimitTen", { cause: error, description: error.message });
@@ -91,14 +91,14 @@ export class ReplyService {
             const token = req.cookies["token"];
             const { userId } = this.jwt.verify(token);
 
-            const data = this.selectReplyById(id);
+            const data = await this.selectReplyById(id);
             if (data["dataValues"].user.dataValues.id !== userId) {
                 return new UnauthorizedException("작성자와 로그인된 유저 불일치");
             }
 
             const { content } = req.body;
 
-            return this.replyModel.update({ content }, { where: { id } });
+            return await this.replyModel.update({ content }, { where: { id } });
         } catch (error) {
             return new BadRequestException("reply request fail service updateReplyById", { cause: error, description: error.message });
         }
@@ -110,12 +110,12 @@ export class ReplyService {
             const token = req.cookies["token"];
             const { userId } = this.jwt.verify(token);
 
-            const data = this.selectReplyById(id);
+            const data = await this.selectReplyById(id);
             if (data["dataValues"].user.dataValues.id !== userId) {
                 return new UnauthorizedException("작성자와 로그인된 유저 불일치");
             }
 
-            return this.replyModel.destroy({ where: { id } });
+            return await this.replyModel.destroy({ where: { id } });
         } catch (error) {
             return new BadRequestException("reply request fail service deleteReplyById", { cause: error, description: error.message });
         }

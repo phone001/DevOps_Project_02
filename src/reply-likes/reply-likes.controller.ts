@@ -23,18 +23,18 @@ export class ReplyLikesController {
       const token = req.cookies["token"];
       const { userId } = this.jwt.verify(token);
 
-      const isExist = this.replyLikesService.selectReplyLikesByReplyIdUserId(replyId, userId);
+      const isExist = await this.replyLikesService.selectReplyLikesByReplyIdUserId(replyId, userId);
 
       // reply-likes테이블에 존재하는지 확인 후 없으면 생성
       if (!isExist) {
-        return this.replyLikesService.createReplyLikes(replyId, userId, true);
+        return await this.replyLikesService.createReplyLikes(replyId, userId, true);
       }
 
       // like 컬럼 true false판단 후 수정, 삭제
       if (isExist["dataValues"].likes) {
-        return this.replyLikesService.deleteReplyLikesByReplyIdUserId(replyId, userId);
+        return await this.replyLikesService.deleteReplyLikesByReplyIdUserId(replyId, userId);
       } else {
-        return this.replyLikesService.updateReplyLikesByReplyIdUserId(replyId, userId, true);
+        return await this.replyLikesService.updateReplyLikesByReplyIdUserId(replyId, userId, true);
       }
 
     } catch (error) {
@@ -50,18 +50,18 @@ export class ReplyLikesController {
       const token = req.cookies["token"];
       const { userId } = this.jwt.verify(token);
 
-      const isExist = this.replyLikesService.selectReplyLikesByReplyIdUserId(replyId, userId);
+      const isExist = await this.replyLikesService.selectReplyLikesByReplyIdUserId(replyId, userId);
 
       // reply-likes테이블에 존재하는지 확인 후 없으면 생성
       if (!isExist) {
-        return this.replyLikesService.createReplyLikes(replyId, userId, false);
+        return await this.replyLikesService.createReplyLikes(replyId, userId, false);
       }
 
       // like 컬럼 true false판단 후 수정, 삭제
       if (!isExist["dataValues"].likes) {
-        return this.replyLikesService.deleteReplyLikesByReplyIdUserId(replyId, userId);
+        return await this.replyLikesService.deleteReplyLikesByReplyIdUserId(replyId, userId);
       } else {
-        return this.replyLikesService.updateReplyLikesByReplyIdUserId(replyId, userId, false);
+        return await this.replyLikesService.updateReplyLikesByReplyIdUserId(replyId, userId, false);
       }
 
     } catch (error) {

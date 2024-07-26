@@ -1,34 +1,81 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Res, Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Inject, Req, UploadedFile, Query, UsePipes, Headers, HttpStatus } from '@nestjs/common';
 import { UserService } from './user.service';
+import { Response, Request, query } from "express";
+import { JsonWebTokenError } from 'jsonwebtoken';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { JWTPipe } from 'src/pipe/JWT.pipe';
+import { ApiBody, ApiConsumes, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags("User")
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly jwt: JwtService, private readonly userService: UserService) { }
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  @Post("createUser")
+  @ApiOperation({ summary: "회원가입" })
+  @ApiConsumes("multipart/form-data")
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        loginId: { type: "string" },
+        password: { type: "string" },
+        oauthType: { type: "string" },
+        nickname: { type: "string" },
+        file: { type: "string", format: "binary" }
+      }
+    }
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  async create(@UploadedFile() file: Express.Multer.File, @Body() userInfo: CreateUserDto, @Req() req: Request, @Query("token") token: string) {
+    let data = null;
+    console.log(userInfo)
+    if (token) {
+      data = await this.userService.createSotial(userInfo, token);
+      console.log()
+      return data;
+    }
+
+    data = await this.userService.create(userInfo, file);
+    console.log("데이터", data);
+    return data;
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
+  @Post('signin')
+  @ApiOperation({ summary: "로그인" })
+  @ApiBody({
+    schema: {
+      properties: {
+        loginId: { type: "string" },
+        password: { type: "string" },
+        oauthType: { type: "string" },
+      }
+    }
+  })
+  async signIn(@Body('loginId') id: string, @Body("password") password: string, @Body("oauthType") oauthType: string, @Res() res: Response) {
+    const token = await this.userService.signIn(id, password, oauthType, null);
+    console.log(`jwt 토큰 : ${token}`);
+    if (token) {
+      const date = new Date();
+      date.setMinutes(date.getMinutes() + 60);
+      res.cookie("token", token, { httpOnly: true, expires: date });
+      return res.redirect("http://localhost:8000");
+    } else {
+      res.setHeader("content-type", "text/html");
+      res.send("<script>alert('계정을 다시 확인해주세요');location.href='http://localhost:8000/user/signin'</script>")
+    }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @Post("logout")
+  @ApiOperation({ summary: "로그아웃" })
+  async logout(@Req() req: Request, @Res() res: Response) {
+    const { token } = req.cookies;
+    console.log(token)
+    const result = await this.userService.logout(token);
+    res.clearCookie('token');
+    res.status(HttpStatus.OK);
+    res.send(result);
   }
 }
