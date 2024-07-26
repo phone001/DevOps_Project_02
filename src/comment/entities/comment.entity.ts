@@ -1,4 +1,5 @@
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
+import { BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Table } from "sequelize-typescript";
+import { CommentLikes } from "src/comment-likes/entities/commentLikes.entity";
 import { Post } from "src/post/entities/post.entity";
 import { User } from "src/user/entities/user.entity";
 
@@ -26,4 +27,12 @@ export class Comment extends Model {
 
     @BelongsTo(() => Post)
     post: Post
+
+    @HasMany(() => CommentLikes, {
+        sourceKey: "id",
+        foreignKey: "commentId",
+        onDelete: 'cascade'
+
+    })
+    commentLikes: CommentLikes[];
 }

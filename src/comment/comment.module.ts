@@ -4,9 +4,13 @@ import { CommentController } from './comment.controller';
 import { CreateComment } from './dto/comment.dto';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Comment } from './entities/comment.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Comment])]
+  imports: [
+    SequelizeModule.forFeature([Comment]),
+    JwtModule.register({ secret: process.env.JWT_KEY })
+  ]
   , controllers: [CommentController],
   providers: [CommentService, CreateComment],
 })
