@@ -11,6 +11,12 @@ import { PostLikesModule } from './post-likes/post-likes.module';
 import { CommentLikesModule } from './comment-likes/comment-likes.module';
 import { ReplyLikesModule } from './reply-likes/reply-likes.module';
 import * as cookie from 'cookie-parser';
+import { UploadModule } from './upload/upload.module';
+import { ServeStaticModule } from "@nestjs/serve-static"
+import { join } from "path";
+import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
+
 
 @Module({
   imports: [
@@ -41,8 +47,15 @@ import * as cookie from 'cookie-parser';
     ReplyModule,
     PostLikesModule,
     CommentLikesModule,
-    ReplyLikesModule
-  ],
+    ReplyLikesModule,
+    UploadModule,
+    AuthModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, "static")
+    }), JwtModule.register({
+      secret: process.env.JWT_KEY,
+      signOptions: { expiresIn: "60m" }
+    })],
   controllers: [AppController],
   providers: [AppService],
 })
