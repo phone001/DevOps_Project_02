@@ -1,9 +1,10 @@
-import { BadRequestException, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param, Post, Req, UseInterceptors } from '@nestjs/common';
 import { PostLikesService } from './post-likes.service';
 import { Request } from 'express';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PostIdIsNumber } from './pipe/post-likes.pipe';
 import { JwtService } from '@nestjs/jwt';
+import { logIntercepter } from 'src/intercepter/log.intercepter';
 
 @ApiTags("PostLikes")
 @Controller('post-likes')
@@ -14,6 +15,7 @@ export class PostLikesController {
   ) { }
 
   @Post("/like/:postId")
+  @UseInterceptors(logIntercepter)
   @ApiOperation({ summary: '게시글 좋아요 제어' })
   async likeControl(@Param("postId", new PostIdIsNumber) postId: number, @Req() req: Request) {
     try {
