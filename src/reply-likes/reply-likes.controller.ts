@@ -1,12 +1,14 @@
-import { BadRequestException, Controller, Param, Post, Req } from '@nestjs/common';
+import { BadRequestException, Controller, Param, Post, Req, UseInterceptors } from '@nestjs/common';
 import { ReplyLikesService } from './reply-likes.service';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { ReplyIdIsNumber } from './pipe/reply-likes.pipe';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { logIntercepter } from 'src/intercepter/log.intercepter';
 
 @ApiTags("ReplyLikes")
 @Controller('reply-likes')
+@UseInterceptors(logIntercepter)
 export class ReplyLikesController {
   constructor(
     private readonly replyLikesService: ReplyLikesService,

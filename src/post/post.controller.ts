@@ -1,24 +1,29 @@
 import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { PostService } from './post.service';
-import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CreatePost } from './dto/post.dto';
 import { Request } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PostIdIsNumber } from './pipe/post.pipe';
+import { logIntercepter } from 'src/intercepter/log.intercepter';
 
 @ApiTags("Post")
 @Controller('post')
+@UseInterceptors(logIntercepter)
 export class PostController {
   constructor(private readonly postService: PostService) { }
 
   // 글 작성(생성)
   @Post("/create")
   @ApiOperation({ summary: '게시글 생성' })
+  @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
+      type: "object",
       properties: {
         title: { type: "string" },
         content: { type: "string" },
+        image: { type: "string", format: "binary" }
       }
     },
     description: "imgPath는 멀터가 처리중"

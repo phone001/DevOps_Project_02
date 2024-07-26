@@ -1,12 +1,14 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Req } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Req, UseInterceptors } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateComment } from './dto/comment.dto';
 import { Request } from 'express';
 import { CommentIdIsNumber, PostIdIsNumber } from './pipe/comment.pipe';
+import { logIntercepter } from 'src/intercepter/log.intercepter';
 
 @ApiTags("Comment")
 @Controller('comment')
+@UseInterceptors(logIntercepter)
 export class CommentController {
   constructor(private readonly commentService: CommentService) { }
 

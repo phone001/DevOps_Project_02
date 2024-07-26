@@ -73,7 +73,6 @@ export class PostService {
 
     async likeDislikeCalcForPost(data: any) {
         const postLikes = data.dataValues.postLikes;
-        console.log(postLikes)
         let like = 0;
         let dislike = 0;
         const likedUserId = [];
