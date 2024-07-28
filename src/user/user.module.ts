@@ -9,6 +9,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
 import { UploadService } from './upload/upload.service';
+import { TokenGuard } from 'src/auth/guards/token.guard';
+import { PostModule } from 'src/post/post.module';
+import { CommentModule } from 'src/comment/comment.module';
+import { ReplyModule } from 'src/reply/reply.module';
+import { PostLikesModule } from 'src/post-likes/post-likes.module';
+import { CommentLikes } from 'src/comment-likes/entities/commentLikes.entity';
+import { ReplyLikesModule } from 'src/reply-likes/reply-likes.module';
+import { CommentLikesModule } from 'src/comment-likes/comment-likes.module';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }),
@@ -19,9 +27,9 @@ import { UploadService } from './upload/upload.service';
   }),
   MulterModule.registerAsync({
     useClass: UploadService,
-  })],
+  }), PostModule, CommentModule, ReplyModule, PostLikesModule, CommentLikesModule, ReplyLikesModule],
   controllers: [UserController],
   exports: [UserService],
-  providers: [UserService, UserRepository, UserModel],
+  providers: [UserService, UserRepository, UserModel, TokenGuard],
 })
 export class UserModule { }

@@ -17,17 +17,5 @@ export class AuthService {
 
   }
 
-  async signUp(token: string) {
-    console.log(this.userService)
-    const data = await axios.post("https://kapi.kakao.com/v2/user/me", {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    })
-    console.log(data)
-    const user = {
 
-    }
-    //this.userService.create(data, null);
-  }
 }

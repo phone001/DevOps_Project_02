@@ -1,7 +1,5 @@
 import { Req, Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 
@@ -33,13 +31,10 @@ export class AuthController {
 
     res.cookie("token", token, { httpOnly: true, expires: date, sameSite: 'none' });
     res.setHeader("content-type", "text/html")
-    return res.send(`<script>opener.location.href='http://localhost:8000'; window.close(); </script>`)
+    return res.send(`<script>opener.location.href='http://localhost:8000/user/signin'; window.close(); </script>`)
   }
 
-  @Get("kakao/signup")
-  kakaoSignUp(@Query("token") token: string) {
-    this.authService.signUp(token);
-  }
+
 
   @Get("google")
   @UseGuards(AuthGuard("google"))
@@ -56,7 +51,7 @@ export class AuthController {
 
       if (!token) {
         res.setHeader("content-type", "text/html")
-        res.send(`<script>alert('회원가입으로 이동합니다.');opener.location.href='http://localhost:8000/user/signup?token=${data["accessToken"]}&oauthType=google'; window.close(); </script>`)
+        return res.send(`<script>alert('회원가입으로 이동합니다.');opener.location.href='http://localhost:8000/user/signup?token=${data["accessToken"]}&oauthType=google'; window.close(); </script>`)
       }
       const date = new Date();
       date.setMinutes(date.getMinutes() + 60);
@@ -68,8 +63,5 @@ export class AuthController {
       console.log(error)
     }
   }
-  @Get("google/callback2")
-  test() {
 
-  }
 }

@@ -15,6 +15,7 @@ import { ServeStaticModule } from "@nestjs/serve-static"
 import { join } from "path";
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { TokenGuard } from './auth/guards/token.guard';
 
 
 @Module({
@@ -49,7 +50,8 @@ import { JwtModule } from '@nestjs/jwt';
     ReplyLikesModule,
     AuthModule,
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, "static")
+      rootPath: join(__dirname, "static"),
+      exclude: ['/static/index.html'], // index.html 파일을 제외
     }), JwtModule.register({
       secret: process.env.JWT_KEY,
       signOptions: { expiresIn: "60m" }
