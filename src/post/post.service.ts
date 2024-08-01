@@ -9,6 +9,7 @@ import { User } from 'src/user/entities/user.entity';
 import { PostLikes } from 'src/post-likes/entities/postLikes.entity';
 import * as fs from 'fs';
 import sequelize from 'sequelize';
+import { join } from 'path';
 
 @Injectable()
 export class PostService {
@@ -212,7 +213,8 @@ export class PostService {
 
             // 수정시 수정전 이미지 삭제
             if (data["dataValues"].imgPath) {
-                fs.rm(`src/static${data["dataValues"]["imgPath"]}`, (err) => {
+                const path = join(__dirname, "..", "static", `${data["dataValues"]["imgPath"]}`)
+                fs.rm(path, (err) => {
                     if (err) {
                         console.log(err);
                     }
@@ -239,7 +241,8 @@ export class PostService {
 
             // 삭제시 저장된 이미지도 삭제
             if (data["dataValues"].imgPath) {
-                fs.rm(`src/static${data["dataValues"].imgPath}`, (err) => {
+                const path = join(__dirname, "..", "static", `${data["dataValues"]["imgPath"]}`)
+                fs.rm(path, (err) => {
                     if (err) {
                         console.log(err);
                     }

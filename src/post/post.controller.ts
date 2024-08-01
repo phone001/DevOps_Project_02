@@ -36,7 +36,7 @@ export class PostController {
     try {
       // const imgPath = "/imgs/post/" + file.filename;
       if (file) {
-        createPostDTO.imgPath = "http://127.0.0.1:3000/imgs/post/" + file.filename;
+        createPostDTO.imgPath = "/imgs/post/" + file.filename;
       } else {
         createPostDTO.imgPath = null;
       }
@@ -124,9 +124,8 @@ export class PostController {
     try {
       // 멀터 로직 확인 완료 후 변경하던지 말던지 결정해야 한다.
       // const imgPath = "/imgs/post/" + ;
-      console.log(file);
       if (file) {
-        updatePostDTO.imgPath = "http://127.0.0.1:3000/imgs/post/" + file.filename;
+        updatePostDTO.imgPath = "/imgs/post/" + file.filename;
       } else {
         updatePostDTO.imgPath = null;
       }
