@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/user/entities/user.entity';
 import { PostLikes } from 'src/post-likes/entities/postLikes.entity';
 import * as fs from 'fs';
+import sequelize from 'sequelize';
 
 @Injectable()
 export class PostService {
@@ -57,6 +58,21 @@ export class PostService {
             e.dataValues["dislikedUserId"] = dislikedUserId;
         })
         return data;
+    }
+
+    // 개시글 id 가져오기
+    async selectPostCount(): Promise<Post[] | BadRequestException> {
+        try {
+            const idArr = [];
+            const data = await this.postModel.findAll({ attributes: ["id"] });
+            console.log(data);
+            data.forEach((el) => {
+                idArr.push(el.dataValues.id);
+            })
+            return idArr;
+        } catch (error) {
+            return new BadRequestException("post request fail service selectPostCountById", { cause: error, description: error.message });
+        }
     }
 
 
