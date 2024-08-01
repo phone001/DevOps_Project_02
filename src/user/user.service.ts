@@ -124,19 +124,18 @@ export class UserService {
     try {
       if (file) {
         try {
-
           if (info.preImg.indexOf("/imgs/user/default.png") == -1) {
-            const filePath = join(process.cwd(), "src", "static", String(info.preImg).replace("http://localhost:3000/", ""))
+            const filePath = join(__dirname, '..', '..', "static", String(info.preImg).replace("http://127.0.0.1:3000/", ""))
             await rm(filePath);
             console.log(`${filePath} 삭제됨`)
           }
         } catch (error) {
           console.error("삭제할 이미지 없음");
         }
-        info.imgPath = "http://localhost:3000/imgs/user/" + file.filename;
+        info.imgPath = "http://127.0.0.1:3000/imgs/user/" + file.filename;
       }
 
-      info.password = await hash(info.password, 10);
+      if (info.password) info.password = await hash(info.password, 10);
       await this.userRepo.modify(parseInt(info.id), info);
     } catch (error) {
       console.error(error);
