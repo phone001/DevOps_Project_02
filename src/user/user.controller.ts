@@ -6,7 +6,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiBody, ApiConsumes, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { TokenGuard } from 'src/auth/guards/token.guard';
+import { TokenEmptyGuard } from 'src/auth/guards/token.guard';
 
 @ApiTags("User")
 @Controller('user')
@@ -73,9 +73,9 @@ export class UserController {
     res.send(result);
   }
 
-  @Post('mypage')
-  @UseGuards(TokenGuard)
-  @ApiOperation({ summary: "mypage" })
+  @Post('getUserInfo')
+  @UseGuards(TokenEmptyGuard)
+  @ApiOperation({ summary: "getUserInfo" })
   async myPage(@Req() req: Request, @Res() res: Response) {
     const { token } = req.cookies;
     const info = await this.userService.userInfo(token);
@@ -95,8 +95,10 @@ export class UserController {
   }
 
   @Delete("delete")
-  async deleteUser(@Body("id", ParseIntPipe) id: number) {
-    console.log("test")
+  async deleteUser(@Body("id", ParseIntPipe) id: number, @Res() res: Response) {
+    res.clearCookie('token');
+    res.status(HttpStatus.OK);
     await this.userService.delete(id);
+    res.send();
   }
 }

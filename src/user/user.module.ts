@@ -9,7 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
 import { UploadService } from './upload/upload.service';
-import { TokenGuard } from 'src/auth/guards/token.guard';
+import { TokenEmptyGuard, TokenExistGuard } from 'src/auth/guards/token.guard';
 import { PostModule } from 'src/post/post.module';
 import { CommentModule } from 'src/comment/comment.module';
 import { ReplyModule } from 'src/reply/reply.module';
@@ -30,6 +30,6 @@ import { CommentLikesModule } from 'src/comment-likes/comment-likes.module';
   }), PostModule, CommentModule, ReplyModule, PostLikesModule, CommentLikesModule, ReplyLikesModule],
   controllers: [UserController],
   exports: [UserService],
-  providers: [UserService, UserRepository, UserModel, TokenGuard],
+  providers: [UserService, UserRepository, UserModel, TokenEmptyGuard, TokenExistGuard],
 })
 export class UserModule { }

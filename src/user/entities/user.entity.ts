@@ -13,12 +13,12 @@ import { Reply } from "src/reply/entities/reply.entity";
     underscored: false
 })
 export class User extends Model {
-    @PrimaryKey
-    @AutoIncrement
-    @Column({
-        type: DataType.INTEGER,
-    })
-    id: number;
+    // @PrimaryKey
+    // @AutoIncrement
+    // @Column({
+    //     type: DataType.INTEGER
+    // })
+    // id: number;
 
     //email
     @Column({
@@ -52,38 +52,44 @@ export class User extends Model {
 
     @HasMany(() => Post, {
         sourceKey: "id",
-        foreignKey: "userId"
+        foreignKey: "userId",
+        // onDelete: "CASCADE"
     })
     posts: Post[];
 
     @HasMany(() => Comment, {
         sourceKey: "id",
-        foreignKey: "userId"
+        foreignKey: "userId",
+        // onDelete: "cascade"
     })
     comments: Comment[];
 
     @HasMany(() => Reply, {
         sourceKey: "id",
-        foreignKey: "userId"
+        foreignKey: "userId",
+        // onDelete: "cascade"
     })
     reply: Reply[];
 
     @HasMany(() => PostLikes, {
         sourceKey: "id",
-        foreignKey: "userId"
+        foreignKey: "userId",
+        // onDelete: "cascade"
     })
     postLikes: PostLikes[];
 
     @HasMany(() => CommentLikes, {
         sourceKey: "id",
-        foreignKey: "userId"
+        foreignKey: "userId",
+        // onDelete: "cascade"
     })
     commentLikes: CommentLikes[];
 
 
     @HasMany(() => ReplyLikes, {
         sourceKey: "id",
-        foreignKey: "userId"
+        foreignKey: "userId",
+        // onDelete: "cascade"
     })
     replyLikes: ReplyLikes[];
 }
