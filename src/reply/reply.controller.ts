@@ -28,9 +28,26 @@ export class ReplyController {
     try {
       return await this.replyService.createReply(createReplyDTO, req);
     } catch (error) {
-      return new BadRequestException("comment request fail controller createComment", { cause: error, description: error.message });
+      return new BadRequestException("reply request fail controller createComment", { cause: error, description: error.message });
     }
   }
+
+
+  @Get("/count/:commentId")
+  @ApiOperation({ summary: '대댓글 개수 commentId로 조회' })
+  @ApiParam({
+    name: "commentId",
+    example: "1",
+    required: true
+  })
+  async selectReplyCountByCommentId(@Param("commentId", new CommentIdIsNumber) commentId: number) {
+    try {
+      return await this.replyService.selectReplyCountByCommentId(commentId);
+    } catch (error) {
+      return new BadRequestException("reply request fail controller selectReplyCountByCommentId", { cause: error, description: error.message });
+    }
+  }
+
 
   @Get("/:commentId")
   @ApiOperation({ summary: '대댓글 조회', description: "대댓글 commentId로 10개 조회" })
@@ -39,11 +56,11 @@ export class ReplyController {
     example: "1",
     required: true
   })
-  async selectCommentByCommentIdLimitTen(@Param("commentId", new ReplyIdIsNumber) commentId) {
+  async selectReplyByCommentIdLimitTen(@Param("commentId", new ReplyIdIsNumber) commentId) {
     try {
       return await this.replyService.selectReplyByCommentIdLimitTen(commentId);
     } catch (error) {
-      return new BadRequestException("comment request fail controller selectCommentByCommentIdLimitTen", { cause: error, description: error.message });
+      return new BadRequestException("reply request fail controller selectReplyByCommentIdLimitTen", { cause: error, description: error.message });
     }
   }
 
@@ -54,11 +71,11 @@ export class ReplyController {
       properties: { content: { type: "string" } }
     }
   })
-  async updateCommentById(@Param("id", new CommentIdIsNumber) id: number, @Req() req: Request) {
+  async updateReplyById(@Param("id", new CommentIdIsNumber) id: number, @Req() req: Request) {
     try {
       return this.replyService.updateReplyById(id, req);
     } catch (error) {
-      return new BadRequestException("comment request fail controller updateCommentById", { cause: error, description: error.message });
+      return new BadRequestException("reply request fail controller updateReplyById", { cause: error, description: error.message });
     }
   }
 
@@ -68,7 +85,7 @@ export class ReplyController {
     try {
       await this.replyService.deleteReplyById(id, req);
     } catch (error) {
-      return new BadRequestException("comment request fail controller deleteCommentById", { cause: error, description: error.message });
+      return new BadRequestException("reply request fail controller deleteCommentById", { cause: error, description: error.message });
     }
   }
 }

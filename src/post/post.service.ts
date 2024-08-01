@@ -65,7 +65,6 @@ export class PostService {
         try {
             const idArr = [];
             const data = await this.postModel.findAll({ attributes: ["id"] });
-            console.log(data);
             data.forEach((el) => {
                 idArr.push(el.dataValues.id);
             })
@@ -212,11 +211,13 @@ export class PostService {
             }
 
             // 수정시 수정전 이미지 삭제
-            fs.rm(`src/static${data["dataValues"]["imgPath"]}`, (err) => {
-                if (err) {
-                    console.log(err);
-                }
-            });
+            if (data["dataValues"].imgPath) {
+                fs.rm(`src/static${data["dataValues"]["imgPath"]}`, (err) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            }
 
             return await this.postModel.update({ title, content, imgPath }, { where: { id } });
         } catch (error) {
@@ -232,15 +233,18 @@ export class PostService {
 
             const data = await this.selectPostById(id);
             if (data["dataValues"].user.dataValues.id !== userId) {
+
                 return new UnauthorizedException("작성자와 로그인된 유저 불일치");
             }
 
             // 삭제시 저장된 이미지도 삭제
-            fs.rm(`src/static${data["dataValues"].imgPath}`, (err) => {
-                if (err) {
-                    console.log(err);
-                }
-            });
+            if (data["dataValues"].imgPath) {
+                fs.rm(`src/static${data["dataValues"].imgPath}`, (err) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            }
 
             return await this.postModel.destroy({ where: { id } });
         } catch (error) {

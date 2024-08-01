@@ -32,7 +32,6 @@ export class Comment extends Model {
         sourceKey: "id",
         foreignKey: "commentId",
         onDelete: 'cascade'
-
     })
     commentLikes: CommentLikes[];
 }
