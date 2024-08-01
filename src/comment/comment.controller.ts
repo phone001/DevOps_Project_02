@@ -5,6 +5,7 @@ import { CreateComment } from './dto/comment.dto';
 import { Request } from 'express';
 import { CommentIdIsNumber, PostIdIsNumber } from './pipe/comment.pipe';
 import { logIntercepter } from 'src/intercepter/log.intercepter';
+import { TokenEmptyGuard } from 'src/auth/guards/token.guard';
 
 @ApiTags("Comment")
 @Controller('comment')
@@ -45,6 +46,7 @@ export class CommentController {
 
 
   @Post("createComment")
+  @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: '댓글 생성' })
   @ApiBody({
     schema: {
@@ -65,6 +67,7 @@ export class CommentController {
 
 
   @Put("/:id")
+  @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: '댓글 수정', description: "댓글 id로 수정" })
   @ApiBody({
     schema: {
@@ -81,6 +84,7 @@ export class CommentController {
 
 
   @Delete("/:id")
+  @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: '댓글 삭제', description: "댓글 id로 삭제" })
   async deleteCommentById(@Param("id", new CommentIdIsNumber) id: number, @Req() req: Request) {
     try {

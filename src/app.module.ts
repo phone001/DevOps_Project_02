@@ -19,15 +19,27 @@ import { TokenEmptyGuard } from './auth/guards/token.guard';
 
 
 @Module({
+  // imports: [
+  //   ConfigModule.forRoot({ isGlobal: true }),
+  //   SequelizeModule.forRoot({
+  //     dialect: "mysql",
+  //     host: "localhost",
+  //     port: parseInt(process.env.DB_PORT),
+  //     username: process.env.DB_USERNAME,
+  //     password: process.env.DB_PASSWORD,
+  //     database: process.env.DB_NAME,
+  //     autoLoadModels: true,
+  //     synchronize: true
+  //   }),
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     SequelizeModule.forRoot({
       dialect: "mysql",
       host: "localhost",
-      port: parseInt(process.env.DB_PORT),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
+      port: 3306,
+      username: "root",
+      password: "root",
+      database: "test",
       autoLoadModels: true,
       synchronize: true
     }),

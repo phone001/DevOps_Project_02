@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { PostService } from './post.service';
 import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CreatePost } from './dto/post.dto';
@@ -6,6 +6,8 @@ import { Request } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PostIdIsNumber } from './pipe/post.pipe';
 import { logIntercepter } from 'src/intercepter/log.intercepter';
+import { TokenEmptyGuard } from 'src/auth/guards/token.guard';
+
 
 @ApiTags("Post")
 @Controller('post')
@@ -15,6 +17,7 @@ export class PostController {
 
   // 글 작성(생성)
   @Post("/create")
+  @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: '게시글 생성' })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
@@ -28,13 +31,12 @@ export class PostController {
     },
     description: "imgPath는 멀터가 처리중"
   })
-
   @UseInterceptors(FileInterceptor('file'))
   async createPost(@Body() createPostDTO: CreatePost, @Req() req: Request, @UploadedFile() file: Express.Multer.File) {
     try {
       // const imgPath = "/imgs/post/" + file.filename;
       if (file) {
-        createPostDTO.imgPath = "/imgs/post/" + file.filename;
+        createPostDTO.imgPath = "http://127.0.0.1:3000/imgs/post/" + file.filename;
       } else {
         createPostDTO.imgPath = null;
       }
@@ -59,6 +61,7 @@ export class PostController {
 
   // 유저 아이디로 글 조회
   @Get("findPostByUser")
+  @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: '자신이 작성한 게시글 조회', description: "userId는 JWT복호화" })
   async selectPostByUserId(@Req() req: Request) {
     try {
@@ -102,6 +105,7 @@ export class PostController {
 
   // 글 수정
   @Put("/:id")
+  @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: '게시글 수정', description: "게시글 id로 수정" })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
@@ -120,9 +124,9 @@ export class PostController {
     try {
       // 멀터 로직 확인 완료 후 변경하던지 말던지 결정해야 한다.
       // const imgPath = "/imgs/post/" + ;
-
+      console.log(file);
       if (file) {
-        updatePostDTO.imgPath = "/imgs/post/" + file.filename;
+        updatePostDTO.imgPath = "http://127.0.0.1:3000/imgs/post/" + file.filename;
       } else {
         updatePostDTO.imgPath = null;
       }
@@ -135,6 +139,7 @@ export class PostController {
 
   //글 삭제
   @Delete("/:id")
+  @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: '게시글 삭제', description: "게시글 id로 삭제" })
   async deletePostById(@Param("id", new PostIdIsNumber) postId: number, @Req() req: Request) {
     try {
