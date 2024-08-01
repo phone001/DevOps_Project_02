@@ -15,28 +15,19 @@ import { ServeStaticModule } from "@nestjs/serve-static"
 import { join } from "path";
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { TokenEmptyGuard } from './auth/guards/token.guard';
 
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    // SequelizeModule.forRoot({
-    //   dialect: "mysql",
-    //   host: "localhost",
-    //   port: parseInt(process.env.DB_PORT),
-    //   username: process.env.DB_USERNAME,
-    //   password: process.env.DB_PASSWORD,
-    //   database: process.env.DB_NAME,
-    //   autoLoadModels: true,
-    //   synchronize: true
-    // }),
     SequelizeModule.forRoot({
       dialect: "mysql",
       host: "localhost",
-      port: 3306,
-      username: "root",
-      password: "root",
-      database: "test",
+      port: parseInt(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       autoLoadModels: true,
       synchronize: true
     }),
@@ -49,7 +40,8 @@ import { JwtModule } from '@nestjs/jwt';
     ReplyLikesModule,
     AuthModule,
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, "static")
+      rootPath: join(__dirname, "static"),
+      exclude: ['/static/index.html'], // index.html 파일을 제외
     }), JwtModule.register({
       secret: process.env.JWT_KEY,
       signOptions: { expiresIn: "60m" }
