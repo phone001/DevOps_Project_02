@@ -28,8 +28,4 @@ import * as express from 'express';
   exports: [UserService],
   providers: [UserService, UserRepository, UserModel, TokenEmptyGuard, TokenExistGuard],
 })
-export class UserModule {
-  // configure(consumer: MiddlewareConsumer) {
-  //   consumer.apply(express.static(join(__dirname, 'static')));
-  // }
-}
+export class UserModule { }
