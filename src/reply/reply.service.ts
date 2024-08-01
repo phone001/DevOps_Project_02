@@ -27,6 +27,17 @@ export class ReplyService {
         }
     }
 
+
+    // 대댓글 개수 commentId로 가져오기
+    async selectReplyCountByCommentId(commentId: number): Promise<number> {
+        try {
+            return this.replyModel.count({ where: { commentId } });
+        } catch (error) {
+
+        }
+    }
+
+
     // 좋아요 싫어요 로직
     async likeDislikeCalc(data: any) {
         data.forEach((e) => {

@@ -51,6 +51,15 @@ export class CommentService {
         return data;
     }
 
+    // postId로 해당 글의 댓글 개수 가져오기
+    async selectCommentCountByPostId(postId: number): Promise<number | BadRequestException> {
+        try {
+            return await this.commentModel.count({ where: { postId } });
+        } catch (error) {
+            return new BadRequestException("comment request fail service selectCommentCountByPostId", { cause: error, description: error.message });
+        }
+    }
+
     // postId로 해당 글의 댓글 가져오기
     async selectCommentByPostId(postId: number): Promise<Comment | BadRequestException> {
         try {

@@ -28,6 +28,7 @@ export class PostController {
     },
     description: "imgPath는 멀터가 처리중"
   })
+
   @UseInterceptors(FileInterceptor('file'))
   async createPost(@Body() createPostDTO: CreatePost, @Req() req: Request, @UploadedFile() file: Express.Multer.File) {
     try {
@@ -46,7 +47,7 @@ export class PostController {
 
   // 게시글 id 조회
   @Get("/postCount")
-  @ApiOperation({ summary: '게시글 id 조회' })
+  @ApiOperation({ summary: '게시글 id(인덱스)들 조회' })
   async selectPostCount() {
     try {
       return await this.postService.selectPostCount();
@@ -137,7 +138,7 @@ export class PostController {
   @ApiOperation({ summary: '게시글 삭제', description: "게시글 id로 삭제" })
   async deletePostById(@Param("id", new PostIdIsNumber) postId: number, @Req() req: Request) {
     try {
-      await this.postService.deletePostById(postId, req);
+      return await this.postService.deletePostById(postId, req);
     } catch (error) {
       return new BadRequestException("post request fail controller deletePostById", { cause: error, description: error.message });
     }

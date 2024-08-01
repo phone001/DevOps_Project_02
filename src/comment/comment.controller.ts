@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Req, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateComment } from './dto/comment.dto';
@@ -11,6 +11,38 @@ import { logIntercepter } from 'src/intercepter/log.intercepter';
 @UseInterceptors(logIntercepter)
 export class CommentController {
   constructor(private readonly commentService: CommentService) { }
+
+  @Get("/count/:postId")
+  @ApiOperation({ summary: '댓글 개수 postId로 조회' })
+  @ApiParam({
+    name: "postId",
+    example: "1",
+    required: true
+  })
+  async selectCommentCountByPostId(@Param("postId", new PostIdIsNumber) postId: number) {
+    try {
+      return await this.commentService.selectCommentCountByPostId(postId);
+    } catch (error) {
+      return new BadRequestException("comment request fail controller selectCommentCountByPostId", { cause: error, description: error.message });
+    }
+  }
+
+
+  @Get("/:postId")
+  @ApiOperation({ summary: '댓글 조회', description: "댓글 postId로 10개 조회" })
+  @ApiParam({
+    name: "postId",
+    example: "1",
+    required: true
+  })
+  async selectCommentByPostIdLimitTen(@Param("postId", new PostIdIsNumber) postId: number) {
+    try {
+      return await this.commentService.selectCommentByPostIdLimitTen(postId);
+    } catch (error) {
+      return new BadRequestException("comment request fail controller selectCommentByPostIdLimitTen", { cause: error, description: error.message });
+    }
+  }
+
 
   @Post("createComment")
   @ApiOperation({ summary: '댓글 생성' })
@@ -31,20 +63,6 @@ export class CommentController {
     }
   }
 
-  @Get("/:postId")
-  @ApiOperation({ summary: '댓글 조회', description: "댓글 postId로 10개 조회" })
-  @ApiParam({
-    name: "postId",
-    example: "1",
-    required: true
-  })
-  async selectCommentByPostIdLimitTen(@Param("postId", new PostIdIsNumber) postId) {
-    try {
-      return await this.commentService.selectCommentByPostIdLimitTen(postId);
-    } catch (error) {
-      return new BadRequestException("comment request fail controller selectCommentByPostIdLimitTen", { cause: error, description: error.message });
-    }
-  }
 
   @Put("/:id")
   @ApiOperation({ summary: '댓글 수정', description: "댓글 id로 수정" })
@@ -60,6 +78,7 @@ export class CommentController {
       return new BadRequestException("comment request fail controller updateCommentById", { cause: error, description: error.message });
     }
   }
+
 
   @Delete("/:id")
   @ApiOperation({ summary: '댓글 삭제', description: "댓글 id로 삭제" })
