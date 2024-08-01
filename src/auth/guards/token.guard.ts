@@ -19,11 +19,9 @@ export class TokenExistGuard implements CanActivate {
     constructor(private readonly jwt: JwtService) { }
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         const { cookies: { token } } = context.switchToHttp().getRequest();
-        if (!token)
-            throw new UnauthorizedException("로그인하고 와");
-        const result = this.jwt.verify(token)
-        if (!result)
-            throw new UnauthorizedException("토큰이 상했어");
+        if (token)
+            throw new UnauthorizedException("로그인 정보가 있어서 안됨");
+
         return true;
     }
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
@@ -10,13 +10,9 @@ import { ConfigModule } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
 import { UploadService } from './upload/upload.service';
 import { TokenEmptyGuard, TokenExistGuard } from 'src/auth/guards/token.guard';
-import { PostModule } from 'src/post/post.module';
-import { CommentModule } from 'src/comment/comment.module';
-import { ReplyModule } from 'src/reply/reply.module';
-import { PostLikesModule } from 'src/post-likes/post-likes.module';
-import { CommentLikes } from 'src/comment-likes/entities/commentLikes.entity';
-import { ReplyLikesModule } from 'src/reply-likes/reply-likes.module';
-import { CommentLikesModule } from 'src/comment-likes/comment-likes.module';
+import { join } from 'path';
+import * as express from 'express';
+
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }),
@@ -27,9 +23,13 @@ import { CommentLikesModule } from 'src/comment-likes/comment-likes.module';
   }),
   MulterModule.registerAsync({
     useClass: UploadService,
-  }), PostModule, CommentModule, ReplyModule, PostLikesModule, CommentLikesModule, ReplyLikesModule],
+  })],
   controllers: [UserController],
   exports: [UserService],
   providers: [UserService, UserRepository, UserModel, TokenEmptyGuard, TokenExistGuard],
 })
-export class UserModule { }
+export class UserModule {
+  // configure(consumer: MiddlewareConsumer) {
+  //   consumer.apply(express.static(join(__dirname, 'static')));
+  // }
+}

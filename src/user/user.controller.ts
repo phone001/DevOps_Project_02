@@ -6,7 +6,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiBody, ApiConsumes, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { TokenEmptyGuard } from 'src/auth/guards/token.guard';
+import { TokenEmptyGuard, TokenExistGuard } from 'src/auth/guards/token.guard';
 
 @ApiTags("User")
 @Controller('user')
@@ -28,6 +28,7 @@ export class UserController {
       }
     }
   })
+  @UseGuards(TokenExistGuard)
   @UseInterceptors(FileInterceptor('file'))
   async create(@UploadedFile() file: Express.Multer.File, @Body() userInfo: CreateUserDto, @Req() req: Request, @Query("token") token: string) {
     let data = null;
@@ -50,6 +51,7 @@ export class UserController {
       }
     }
   })
+  @UseGuards(TokenExistGuard)
   async signIn(@Body('loginId') id: string, @Body("password") password: string, @Body("oauthType") oauthType: string, @Res() res: Response) {
     const token = await this.userService.signIn(id, password, oauthType, null);
     if (token) {
@@ -64,6 +66,7 @@ export class UserController {
   }
 
   @Post("logout")
+  @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: "로그아웃" })
   async logout(@Req() req: Request, @Res() res: Response) {
     const { token } = req.cookies;
