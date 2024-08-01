@@ -6,7 +6,6 @@ import { CreateUserDto } from "./dto/create-user.dto";
 export class UserRepository {
     constructor(private readonly userModel: UserModel) { }
     async createUser(userDTO: CreateUserDto) {
-        console.log("레포")
         return await this.userModel.create(userDTO);
     }
 
@@ -16,5 +15,20 @@ export class UserRepository {
 
     async signIn(loginId: string, password: string) {
         return await this.userModel.signIn(loginId, password);
+    }
+
+    async userInfo(userId: number) {
+        return await this.userModel.userInfo(userId);
+    }
+    async modify(id: number, info: any) {
+        try {
+            await this.userModel.modify(id, info);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async delete(id: number) {
+        await this.userModel.delete(id);
     }
 }

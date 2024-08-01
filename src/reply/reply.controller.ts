@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Req, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ReplyService } from './reply.service';
 import { CommentIdIsNumber, ReplyIdIsNumber } from './pipe/reply.pipe';
 import { Request } from 'express';
@@ -6,6 +6,7 @@ import { CreateReply } from './dto/reply.dto';
 import { ApiBearerAuth, ApiBody, ApiCookieAuth, ApiCreatedResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Reply } from './entities/reply.entity';
 import { logIntercepter } from 'src/intercepter/log.intercepter';
+import { TokenEmptyGuard } from 'src/auth/guards/token.guard';
 
 @ApiTags("Reply")
 @Controller('reply')
@@ -14,6 +15,7 @@ export class ReplyController {
   constructor(private readonly replyService: ReplyService) { }
 
   @Post("createReply")
+  @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: '대댓글 생성' })
   @ApiBody({
     schema: {
@@ -65,6 +67,7 @@ export class ReplyController {
   }
 
   @Put("/:id")
+  @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: '대댓글 수정', description: "대댓글 id로 수정" })
   @ApiBody({
     schema: {
@@ -80,6 +83,7 @@ export class ReplyController {
   }
 
   @Delete("/:id")
+  @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: '대댓글 삭제', description: "대댓글 id로 삭제" })
   async deleteCommentById(@Param("id", new CommentIdIsNumber) id: number, @Req() req: Request) {
     try {
