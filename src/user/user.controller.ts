@@ -58,10 +58,10 @@ export class UserController {
       const date = new Date();
       date.setMinutes(date.getMinutes() + 60);
       res.cookie("token", token, { httpOnly: true, expires: date });
-      return res.redirect("http://localhost:8000");
+      return res.redirect("https://dropdot.shop");
     } else {
       res.setHeader("content-type", "text/html");
-      return res.send("<script>alert('계정을 다시 확인해주세요');location.href='http://localhost:8000/user/signin'</script>")
+      return res.send("<script>alert('계정을 다시 확인해주세요');location.href='https://dropdot.shop/user/signin'</script>")
     }
   }
 

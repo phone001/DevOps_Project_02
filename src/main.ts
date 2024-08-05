@@ -5,13 +5,10 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
-    origin: ["http://localhost:8000",
-      "https://testcoffeetree.store",
-      "http://testcoffeetree.store",
-      "https://testcoffeetree.store:8000",
-      "http://testcoffeetree.store:8000",
-      "https://3.38.210.194:8000",
-      "http://3.38.210.194:8000"],
+    origin: [
+      //"http://localhost:8000",
+      "https://dropdot.shop",
+    ],
     credentials: true
   });
 
