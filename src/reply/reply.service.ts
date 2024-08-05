@@ -65,26 +65,31 @@ export class ReplyService {
     // commentId로 해당 댓글의 대댓글 가져오기
     async selectReplyByCommentId(commentId: number): Promise<Reply | BadRequestException> {
         try {
-            return await this.replyModel.findOne({ where: { commentId }, include: [User] });
+            const data = await this.replyModel.findOne({ where: { commentId }, include: [User] });
+            if (!data) {
+                return new NotFoundException("해당 댓글의 대댓글 없음");
+            }
+            return data;
         } catch (error) {
             return new BadRequestException("reply request fail service selectReplyByCommentId", { cause: error, description: error.message });
         }
     }
 
     // 대댓글 조회
-    async selectReplyByCommentIdLimitTen(commentId: number): Promise<Reply[] | BadRequestException | NotFoundException> {
-        try {
-            const isExist = await this.selectReplyByCommentId(commentId);
-            if (!isExist) {
-                return new NotFoundException("해당 댓글의 대댓글 없음");
-            }
+    // async selectReplyByCommentIdLimitTen(commentId: number): Promise<Reply[] | BadRequestException | NotFoundException> {
+    //     try {
+    //         const isExist = await this.selectReplyByCommentId(commentId);
+    //         if (!isExist) {
+    //             return new NotFoundException("해당 댓글의 대댓글 없음");
+    //         }
 
-            const data = await this.replyModel.findAll({ where: { commentId }, limit: 10, include: [User, ReplyLikes] });
-            return this.likeDislikeCalc(data);
-        } catch (error) {
-            return new BadRequestException("reply request fail service selectReplyByCommentIdLimitTen", { cause: error, description: error.message });
-        }
-    }
+    //         const data = await this.replyModel.findAll({ where: { commentId }, limit: 10, include: [User, ReplyLikes] });
+    //         return this.likeDislikeCalc(data);
+    //     } catch (error) {
+    //         return new BadRequestException("reply request fail service selectReplyByCommentIdLimitTen", { cause: error, description: error.message });
+    //     }
+    // }
+
 
     // reply id로 댓글 가져오기
     async selectReplyById(id: number): Promise<Reply | BadRequestException> {
