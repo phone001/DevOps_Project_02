@@ -8,6 +8,8 @@ async function bootstrap() {
     origin: ["http://localhost:8000",
       "https://testcoffeetree.store",
       "http://testcoffeetree.store",
+      "https://testcoffeetree.store:8000",
+      "http://testcoffeetree.store:8000",
       "https://3.38.210.194:8000",
       "http://3.38.210.194:8000"],
     credentials: true
