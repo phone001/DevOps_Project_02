@@ -52,15 +52,15 @@ export class ReplyController {
 
 
   @Get("/:commentId")
-  @ApiOperation({ summary: '대댓글 조회', description: "대댓글 commentId로 10개 조회" })
+  @ApiOperation({ summary: '대댓글 조회', description: "대댓글 commentId로 조회" })
   @ApiParam({
     name: "commentId",
     example: "1",
     required: true
   })
-  async selectReplyByCommentIdLimitTen(@Param("commentId", new ReplyIdIsNumber) commentId) {
+  async selectReplyByCommentId(@Param("commentId", new ReplyIdIsNumber) commentId) {
     try {
-      return await this.replyService.selectReplyByCommentIdLimitTen(commentId);
+      return await this.replyService.selectReplyByCommentId(commentId);
     } catch (error) {
       return new BadRequestException("reply request fail controller selectReplyByCommentIdLimitTen", { cause: error, description: error.message });
     }

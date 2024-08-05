@@ -30,15 +30,15 @@ export class CommentController {
 
 
   @Get("/:postId")
-  @ApiOperation({ summary: '댓글 조회', description: "댓글 postId로 10개 조회" })
+  @ApiOperation({ summary: '댓글 조회', description: "댓글 postId로 조회" })
   @ApiParam({
     name: "postId",
     example: "1",
     required: true
   })
-  async selectCommentByPostIdLimitTen(@Param("postId", new PostIdIsNumber) postId: number) {
+  async selectCommentByPostId(@Param("postId", new PostIdIsNumber) postId: number) {
     try {
-      return await this.commentService.selectCommentByPostIdLimitTen(postId);
+      return await this.commentService.selectCommentByPostId(postId);
     } catch (error) {
       return new BadRequestException("comment request fail controller selectCommentByPostIdLimitTen", { cause: error, description: error.message });
     }

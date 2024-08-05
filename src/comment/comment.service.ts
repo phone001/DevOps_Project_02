@@ -63,26 +63,35 @@ export class CommentService {
     // postId로 해당 글의 댓글 가져오기
     async selectCommentByPostId(postId: number): Promise<Comment | BadRequestException> {
         try {
-            return await this.commentModel.findOne({ where: { postId }, include: [User] });
+            const data = await this.commentModel.findOne({ where: { postId }, include: [User] });
+
+            if (!data) {
+                return new NotFoundException("해당 게시글의 댓글 없음");
+            }
+
+            return data;
         } catch (error) {
             return new BadRequestException("comment request fail service selectCommentByPostId", { cause: error, description: error.message });
         }
     }
 
     // 댓글 조회
-    async selectCommentByPostIdLimitTen(postId: number): Promise<Comment[] | BadRequestException | NotFoundException> {
-        try {
-            const isExist = await this.selectCommentByPostId(postId);
-            if (!isExist) {
-                return new NotFoundException("해당 게시글의 댓글 없음");
-            }
+    // async selectCommentByPostIdLimitTen(postId: number): Promise<Comment[] | BadRequestException | NotFoundException> {
+    //     try {
+    //         const isExist = await this.selectCommentByPostId(postId);
+    //         // console.log(isExist);
 
-            const data = await this.commentModel.findAll({ where: { postId }, limit: 10, include: [User, CommentLikes] });
-            return this.likeDislikeCalc(data);
-        } catch (error) {
-            return new BadRequestException("comment request fail service selectCommentByPostIdLimitTen", { cause: error, description: error.message });
-        }
-    }
+    //         if (!isExist) {
+    //             return new NotFoundException("해당 게시글의 댓글 없음");
+    //         }
+
+    //         const data = await this.commentModel.findAll({ where: { postId }, limit: 10, include: [User, CommentLikes] });
+    //         return this.likeDislikeCalc(data);
+    //     } catch (error) {
+    //         return new BadRequestException("comment request fail service selectCommentByPostIdLimitTen", { cause: error, description: error.message });
+    //     }
+    // }
+
 
     // comment id로 댓글 가져오기
     async selectCommentById(id: number): Promise<Comment | BadRequestException> {
