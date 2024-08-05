@@ -68,8 +68,11 @@ jobs: # 작업의 단위
           ls -al
           pwd
           echo "${{secrets.AWS_SECRET_KEY}}" > ~/.ssh/aws_key
+          ls
           chmod 600 ~/.ssh/aws_key
+          ls
           ssh-keyscan -H ${{secrets.HOST}} > ~/.ssh/known_hosts
+          ls
           cat ~/.ssh/known_hosts
 
       # 배포 준비단계 배포하기 전에 생성할 폴더 및 파일 확인
