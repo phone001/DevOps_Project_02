@@ -142,21 +142,9 @@ export class UserService {
     }
   }
 
-  async delete(token: string) {
-    const userInfo = this.jwt.verify(token);
-    const { dataValues } = await this.userRepo.userInfo(userInfo.userId);
-    try {
-      if (dataValues.imgPath.indexOf("/imgs/user/default.png") == -1) {
-        const filePath = join(__dirname, '..', "static", String(dataValues.imgPath).replace("http://127.0.0.1:3000/", ""))
-        console.log(filePath);
-        await rm(filePath);
-        console.log(`${filePath} 삭제됨`)
-      }
-      return await this.userRepo.delete(userInfo.userId);
-    } catch (error) {
-      console.error("삭제할 이미지 없음");
-    }
+  async delete(id: number) {
+    //이미지, 작성글, 댓글, 대댓글 삭제
+    await this.userRepo.delete(id);
+
   }
-
 }
-

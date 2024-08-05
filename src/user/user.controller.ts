@@ -86,18 +86,6 @@ export class UserController {
   }
 
   @Put("modify")
-  @ApiOperation({ summary: "회원정보 변경" })
-  @ApiConsumes("multipart/form-data")
-  @ApiBody({
-    schema: {
-      type: "object",
-      properties: {
-        password: { type: "string" },
-        nickname: { type: "string" },
-        file: { type: "string", format: "binary" }
-      }
-    }
-  })
   @UseInterceptors(FileInterceptor('file'))
   async modify(@Req() req: Request, @UploadedFile() file: Express.Multer.File,) {
     try {
@@ -110,13 +98,10 @@ export class UserController {
   }
 
   @Delete("delete")
-  @ApiOperation({ summary: "회원정보 삭제" })
-  async deleteUser(@Req() req: Request, @Res() res: Response) {
-    console.log(req)
-    const { token } = req.cookies;
-    await this.userService.delete(token);
+  async deleteUser(@Body("id", ParseIntPipe) id: number, @Res() res: Response) {
     res.clearCookie('token');
     res.status(HttpStatus.OK);
+    await this.userService.delete(id);
     res.send();
   }
 }
