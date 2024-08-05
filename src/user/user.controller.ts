@@ -86,7 +86,17 @@ export class UserController {
   }
 
   @Put("modify")
+  @ApiBody({
+    schema: {
+      properties: {
+        nickname: { type: "string" },
+        password: { type: "string" },
+      }
+    }
+  })
+  @ApiOperation({ summary: "회원정보 수정" })
   @UseInterceptors(FileInterceptor('file'))
+  @UseGuards(TokenEmptyGuard)
   async modify(@Req() req: Request, @UploadedFile() file: Express.Multer.File,) {
     try {
       const info = req.body;
@@ -98,6 +108,8 @@ export class UserController {
   }
 
   @Delete("delete")
+  @UseGuards(TokenEmptyGuard)
+  @ApiOperation({ summary: "회원 탈퇴" })
   async deleteUser(@Body("id", ParseIntPipe) id: number, @Res() res: Response) {
     res.clearCookie('token');
     res.status(HttpStatus.OK);
