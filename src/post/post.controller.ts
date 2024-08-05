@@ -59,6 +59,19 @@ export class PostController {
   }
 
 
+  // 유저 아이디로 글 id 조회
+  @Get("findPostByUserCount")
+  @UseGuards(TokenEmptyGuard)
+  @ApiOperation({ summary: '자신이 작성한 게시글 id 조회', description: "userId는 JWT복호화" })
+  async selectPostByUserIdCount(@Req() req: Request) {
+    try {
+      return await this.postService.selectPostByUserIdCount(req);
+    } catch (error) {
+      return new BadRequestException("post request fail controller selectPostByUserId", { cause: error, description: error.message });
+    }
+  }
+
+
   // 유저 아이디로 글 조회
   @Get("findPostByUser")
   @UseGuards(TokenEmptyGuard)
@@ -73,23 +86,44 @@ export class PostController {
 
   // 검색어로 글 조회 쿼리스트링으로
   @Get("/search")
-  @ApiOperation({ summary: '게시글 검색어 조회', description: "게시글 검색어로 삭제" })
+  @ApiOperation({ summary: '게시글 검색어 조회' })
   @ApiQuery({
     name: "searchTarget",
     required: true,
     description: "검색어"
   })
-  async selectPostBySearchTargetLimitTen(@Query() query: any) {
+  async selectPostBySearchTargetAll(@Query() query: any) {
     try {
       const { searchTarget } = query;
       if (!searchTarget) {
         return new BadRequestException("searchTarget 쿼리스트링 없음");
       }
-      return await this.postService.selectPostBySearchTargetLimitTen(searchTarget);
-    } catch (error) {
-      return new BadRequestException("post request fail controller selectPostBySearchTargetLimitTen", { cause: error, description: error.message });
-    }
 
+      return await this.postService.selectPostBySearchTargetAll(searchTarget);
+    } catch (error) {
+      return new BadRequestException("post request fail controller selectPostBySearchTargetAll", { cause: error, description: error.message });
+    }
+  }
+
+  // 검색어로 글 id 조회
+  @Get("/searchCount")
+  @ApiOperation({ summary: '검색어로 개시글 id 조회' })
+  @ApiQuery({
+    name: "searchTarget",
+    required: true,
+    description: "검색어"
+  })
+  async selectPostBySearchTargetCount(@Query() query: any) {
+    try {
+      const { searchTarget } = query;
+      if (!searchTarget) {
+        return new BadRequestException("searchTarget 쿼리스트링 없음");
+      }
+
+      return await this.postService.selectPostBySearchTargetCount(searchTarget);
+    } catch (error) {
+      return new BadRequestException("post request fail controller selectPostBySearchTargetCount", { cause: error, description: error.message });
+    }
   }
 
   // 글 조회

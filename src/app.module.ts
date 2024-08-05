@@ -54,7 +54,8 @@ import { TokenEmptyGuard } from './auth/guards/token.guard';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, "static"),
       exclude: ['/static/index.html'], // index.html 파일을 제외
-    }), JwtModule.register({
+    }),
+    JwtModule.register({
       secret: process.env.JWT_KEY,
       signOptions: { expiresIn: "60m" }
     })],

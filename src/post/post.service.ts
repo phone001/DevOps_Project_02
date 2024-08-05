@@ -137,6 +137,26 @@ export class PostService {
         }
     }
 
+
+    // 유저 아이디로 작성한 글id 조회
+    async selectPostByUserIdCount(req: Request): Promise<number[] | BadRequestException> {
+        try {
+            const token = req.cookies["token"];
+            const { userId } = this.jwt.verify(token);
+
+            const idArr = [];
+            const data = await this.postModel.findAll({ where: { userId } });
+            data.forEach((el) => {
+                idArr.push(el.dataValues.id);
+            })
+
+            return idArr;
+        } catch (error) {
+            return new BadRequestException("post request fail service selectPostBySearchTargetCount", { cause: error, description: error.message });
+        }
+    }
+
+
     // 유저 아이디로 글 한개 조회(글이 존재하는가?)
     async selectPostByUserIdOnce(req: Request): Promise<Post | BadRequestException> {
         try {
@@ -156,15 +176,33 @@ export class PostService {
 
             const isExist = await this.selectPostByUserIdOnce(userId);
             if (!isExist) {
-                return new NotFoundException("post not exist");
+                return new NotFoundException("작성한 글 없음");
             }
 
+            const data = await this.postModel.findAll({ where: { userId }, include: [User, PostLikes] });
+
             // 혹시 마이페이지에서 유저정보나 좋아요 필요할 시 include 추가해야 함
-            return await this.postModel.findAll({ where: { userId } });
+            return this.likeDislikeCalcForPostArr(data);
         } catch (error) {
             return new BadRequestException("post request fail service selectPostByUserId", { cause: error, description: error.message });
         }
     }
+
+
+    // 검색어로 글 id 조회
+    async selectPostBySearchTargetCount(searchTarget: string): Promise<number[] | BadRequestException> {
+        try {
+            const idArr = [];
+            const data = await this.postModel.findAll({ where: { title: { [Op.like]: `%${searchTarget}%` } } });
+            data.forEach((el) => {
+                idArr.push(el.dataValues.id);
+            })
+            return idArr
+        } catch (error) {
+            return new BadRequestException("post request fail service selectPostBySearchTargetCount", { cause: error, description: error.message });
+        }
+    }
+
 
     // 검색어로 한개 조회
     async selectPostBySearchTarget(searchTarget: string): Promise<Post | BadRequestException> {
@@ -175,8 +213,8 @@ export class PostService {
         }
     }
 
-    // 검색어로 10개 조회
-    async selectPostBySearchTargetLimitTen(searchTarget: string): Promise<Post[] | BadRequestException> {
+    // 검색어로 전체 조회
+    async selectPostBySearchTargetAll(searchTarget: string): Promise<Post[] | BadRequestException> {
         try {
 
             const isExist = await this.selectPostBySearchTarget(searchTarget);
@@ -184,10 +222,10 @@ export class PostService {
                 return new NotFoundException("검색결과 없음");
             }
 
-            const data = await this.postModel.findAll({ where: { title: { [Op.like]: `%${searchTarget}%` } }, limit: 10, include: [User, PostLikes] });
+            const data = await this.postModel.findAll({ where: { title: { [Op.like]: `%${searchTarget}%` } }, include: [User, PostLikes] });
             return this.likeDislikeCalcForPostArr(data);
         } catch (error) {
-            return new BadRequestException("post request fail service selectPostBySearchTargetLimitTen", { cause: error, description: error.message });
+            return new BadRequestException("post request fail service selectPostBySearchTargetAll", { cause: error, description: error.message });
         }
     }
 
