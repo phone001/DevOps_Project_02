@@ -64,6 +64,7 @@ jobs: # 작업의 단위
       - name: ssh 접근할 키파일 생성
         run:
           | # .ssh 폴더가 있어도 에러를 발생시키지 않는다. 부모 디렉터리 생성, 부모 디렉터리 생성
+          rm -rf ~/.ssh
           mkdir -p ~/.ssh
           ls -al
           pwd
