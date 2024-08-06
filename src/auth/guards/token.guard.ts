@@ -5,9 +5,10 @@ import { Observable } from 'rxjs';
 export class TokenEmptyGuard implements CanActivate {
     constructor(private readonly jwt: JwtService) { }
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-        const { cookies: { token } } = context.switchToHttp().getRequest();
+        let { cookies: { token } } = context.switchToHttp().getRequest();
         const { cookies } = context.switchToHttp().getRequest();
         console.log(context.switchToHttp().getRequest().headers);
+        token = token || context.switchToHttp().getRequest().headers.authorization
         if (!token)
             throw new UnauthorizedException("로그인하고 와");
         const result = this.jwt.verify(token)

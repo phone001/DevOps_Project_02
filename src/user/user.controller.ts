@@ -89,7 +89,7 @@ export class UserController {
   @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: "getUserInfo" })
   async myPage(@Req() req: Request, @Res() res: Response) {
-    const { token } = req.cookies;
+    const { token } = req.cookies || req.headers.authorization;
 
     if (!token) {
 
