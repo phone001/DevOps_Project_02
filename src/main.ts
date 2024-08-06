@@ -18,6 +18,7 @@ async function bootstrap() {
       "http://3.34.96.181:8000",
     ],
     methods: ["POST", "GET", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
   });
 
