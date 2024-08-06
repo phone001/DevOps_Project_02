@@ -55,7 +55,7 @@ export class UserController {
   async signIn(@Body('loginId') id: string, @Body("password") password: string, @Body("oauthType") oauthType: string, @Res() res: Response) {
     const token = await this.userService.signIn(id, password, oauthType, null);
     if (token) {
-      res.status(200).send(token);
+      res.status(200).send({ token });
     } else {
       res.status(400).send();
     }
@@ -81,7 +81,7 @@ export class UserController {
       return res.status(400).send();
     }
     const info = await this.userService.userInfo(token);
-    return res.send(info);
+    return res.send({ info });
   }
 
   @Put("modify")
