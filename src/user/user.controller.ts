@@ -62,7 +62,7 @@ export class UserController {
       const NODE_ENV = this.configService.getOrThrow('NODE_ENV')
       console.log(NODE_ENV)
       if (NODE_ENV === 'production') {
-        res.cookie("token", token, { httpOnly: true, expires: date, sameSite: "none", secure: true, path: "/", domain: "dropdot.shop" });
+        res.cookie("token", token, { httpOnly: true, expires: date, sameSite: "none", secure: true, path: "/", domain: "testcoffeetree.store" });
       } else {
         res.cookie('token', token, { path: "/" })
       }
