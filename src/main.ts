@@ -9,6 +9,7 @@ async function bootstrap() {
       //"http://localhost:8000",
       "https://dropdot.shop",
     ],
+    methods: ["POST", "GET", "PUT", "PATCH", "DELETE"],
     credentials: true
   });
 
