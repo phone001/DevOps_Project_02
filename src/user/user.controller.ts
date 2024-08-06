@@ -77,7 +77,9 @@ export class UserController {
   @ApiOperation({ summary: "getUserInfo" })
   async myPage(@Req() req: Request, @Res() res: Response) {
     const { token } = req.cookies;
+
     if (!token) {
+
       return res.status(400).send();
     }
     const info = await this.userService.userInfo(token);

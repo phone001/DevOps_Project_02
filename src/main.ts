@@ -8,6 +8,13 @@ async function bootstrap() {
     origin: [
       //"http://localhost:8000",
       "https://dropdot.shop",
+      "https://dropdot.shop:8000",
+      "http://dropdot.shop:8000",
+      "http://dropdot.shop",
+      "https://3.34.96.181",
+      "http://3.34.96.181",
+      "https://3.34.96.181:8000",
+      "http://3.34.96.181:8000",
     ],
     methods: ["POST", "GET", "PUT", "PATCH", "DELETE"],
     credentials: true
