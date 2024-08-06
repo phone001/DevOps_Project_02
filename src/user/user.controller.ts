@@ -57,8 +57,8 @@ export class UserController {
     if (token) {
       const date = new Date();
       date.setMinutes(date.getDay() + 1);
-      res.cookie("token", token, { httpOnly: true, expires: date, secure: true, sameSite: 'none' });
-      res.status(200).send();
+      res.cookie("token", token, { httpOnly: true, expires: date, secure: true, sameSite: 'none', domain: "dropdot.shop" });
+      res.redirect("https://dropdot.shop");
     } else {
       res.status(400).send();
     }
