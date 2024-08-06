@@ -7,11 +7,12 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiBody, ApiConsumes, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { TokenEmptyGuard, TokenExistGuard } from 'src/auth/guards/token.guard';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags("User")
 @Controller('user')
 export class UserController {
-  constructor(private readonly jwt: JwtService, private readonly userService: UserService) { }
+  constructor(private readonly jwt: JwtService, private readonly userService: UserService, private readonly configService: ConfigService) { }
 
   @Post("createUser")
   @ApiOperation({ summary: "회원가입" })
@@ -55,11 +56,19 @@ export class UserController {
   async signIn(@Body('loginId') id: string, @Body("password") password: string, @Body("oauthType") oauthType: string, @Res() res: Response) {
     const token = await this.userService.signIn(id, password, oauthType, null);
     if (token) {
+
       const date = new Date();
       date.setHours(date.getHours() + 1);
-      res.cookie("token", token, { httpOnly: true, expires: date, sameSite: "none", secure: true, path: "/", domain: "https://dropdot.shop" });
-      res.redirect("https://dropdot.shop");
-      //res.status(200).send({ token });
+      const NODE_ENV = this.configService.getOrThrow('NODE_ENV')
+      console.log(NODE_ENV)
+      if (NODE_ENV === 'production') {
+        res.cookie("token", token, { httpOnly: true, expires: date, sameSite: "none", secure: true, path: "/", domain: "dropdot.shop" });
+      } else {
+        res.cookie('token', token, { path: "/" })
+      }
+
+      // res.redirect("https://dropdot.shop");
+      res.status(200).send({ token });
     } else {
       res.status(400).send();
     }

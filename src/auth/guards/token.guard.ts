@@ -7,7 +7,7 @@ export class TokenEmptyGuard implements CanActivate {
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         const { cookies: { token } } = context.switchToHttp().getRequest();
         const { cookies } = context.switchToHttp().getRequest();
-        console.log(cookies);
+        console.log(context.switchToHttp().getRequest().headers);
         if (!token)
             throw new UnauthorizedException("로그인하고 와");
         const result = this.jwt.verify(token)
