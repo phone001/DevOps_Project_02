@@ -12,9 +12,9 @@ export class UserService {
   constructor(private readonly userRepo: UserRepository, private readonly jwt: JwtService) { }
   async create(userDTO: CreateUserDto, file: Express.Multer.File) {
     if (file) {
-      userDTO.imgPath = "http://localhost:3000/imgs/user/" + file.filename;
+      userDTO.imgPath = "https://testcoffeetree.store/imgs/user/" + file.filename;
     } else {
-      userDTO.imgPath = "http://localhost:3000/imgs/user/default.png"
+      userDTO.imgPath = "https://testcoffeetree.store/imgs/user/default.png"
     }
 
     const data = await this.userRepo.findUser(userDTO.loginId, userDTO.oauthType);
@@ -125,14 +125,14 @@ export class UserService {
       if (file) {
         try {
           if (info.preImg.indexOf("/imgs/user/default.png") == -1) {
-            const filePath = join(__dirname, '..', '..', "static", String(info.preImg).replace("http://127.0.0.1:3000/", ""))
+            const filePath = join(__dirname, '..', '..', "static", String(info.preImg).replace("https://testcoffeetree.store", ""))
             await rm(filePath);
             console.log(`${filePath} 삭제됨`)
           }
         } catch (error) {
           console.error("삭제할 이미지 없음");
         }
-        info.imgPath = "http://127.0.0.1:3000/imgs/user/" + file.filename;
+        info.imgPath = "https://testcoffeetree.store/imgs/user/" + file.filename;
       }
 
       if (info.password) info.password = await hash(info.password, 10);

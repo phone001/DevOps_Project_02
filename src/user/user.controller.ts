@@ -56,11 +56,11 @@ export class UserController {
     const token = await this.userService.signIn(id, password, oauthType, null);
     if (token) {
       const date = new Date();
-      date.setMinutes(date.getMinutes() + 60);
-      res.cookie("token", token, { httpOnly: true, expires: date, secure: true, sameSite: "none" });
-      return res.status(200).send();
+      date.setMinutes(date.getDay() + 1);
+      res.cookie("token", token, { httpOnly: true, expires: date, secure: true, sameSite: 'none' });
+      res.status(200).send();
     } else {
-      return res.status(400).send();
+      res.status(400).send();
     }
   }
 
