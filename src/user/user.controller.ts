@@ -55,7 +55,11 @@ export class UserController {
   async signIn(@Body('loginId') id: string, @Body("password") password: string, @Body("oauthType") oauthType: string, @Res() res: Response) {
     const token = await this.userService.signIn(id, password, oauthType, null);
     if (token) {
-      res.status(200).send({ token });
+      const date = new Date();
+      date.setHours(date.getHours() + 1);
+      res.cookie("token", token, { httpOnly: true, expires: date, sameSite: "none", secure: true, path: "/", domain: "https://dropdot.shop" });
+      res.redirect("https://dropdot.shop");
+      //res.status(200).send({ token });
     } else {
       res.status(400).send();
     }
