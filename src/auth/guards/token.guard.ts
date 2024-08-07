@@ -9,6 +9,9 @@ export class TokenEmptyGuard implements CanActivate {
         const { cookies } = context.switchToHttp().getRequest();
         console.log(context.switchToHttp().getRequest().headers);
         token = token || context.switchToHttp().getRequest().headers.authorization
+
+        console.log("가드에서 찍는 토큰1", context.switchToHttp().getRequest().headers.authorization);
+        console.log("가드에서 찍는 토큰2", token);
         if (!token)
             throw new UnauthorizedException("로그인하고 와");
         const result = this.jwt.verify(token)
