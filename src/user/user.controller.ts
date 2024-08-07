@@ -70,7 +70,7 @@ export class UserController {
       // res.redirect("https://dropdot.shop");
       return res.status(200).send({ token });
     } else {
-      res.status(400).send();
+      return res.status(400).send();
     }
   }
 
