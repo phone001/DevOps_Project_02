@@ -1,17 +1,13 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Observable } from 'rxjs';
+import { Auth } from "src/user/auth/auth";
 @Injectable()
 export class TokenEmptyGuard implements CanActivate {
     constructor(private readonly jwt: JwtService) { }
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-        let { cookies: { token } } = context.switchToHttp().getRequest();
-        const { cookies } = context.switchToHttp().getRequest();
-        console.log(context.switchToHttp().getRequest().headers);
-        token = token || context.switchToHttp().getRequest().headers.authorization.replace("Bearer ", "");
+        const token = Auth.getToken(context.switchToHttp().getRequest());
 
-        console.log("가드에서 찍는 토큰1", context.switchToHttp().getRequest().headers.authorization);
-        console.log("가드에서 찍는 토큰2", token);
         if (!token)
             throw new UnauthorizedException("로그인하고 와");
         const result = this.jwt.verify(token)
@@ -24,7 +20,7 @@ export class TokenEmptyGuard implements CanActivate {
 export class TokenExistGuard implements CanActivate {
     constructor(private readonly jwt: JwtService) { }
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-        const { cookies: { token } } = context.switchToHttp().getRequest();
+        const token = Auth.getToken(context.switchToHttp().getRequest());
         if (token)
             throw new UnauthorizedException("로그인 정보가 있어서 안됨");
 

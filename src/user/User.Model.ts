@@ -45,6 +45,10 @@ export class UserModel {
     }
 
     async delete(id: number) {
-        return await this.user.destroy({ where: { id } })
+        try {
+            return await this.user.destroy({ where: { id } })
+        } catch (error) {
+            console.error(error);
+        }
     }
 }

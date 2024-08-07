@@ -29,6 +29,10 @@ export class UserRepository {
     }
 
     async delete(id: number) {
-        await this.userModel.delete(id);
+        try {
+            await this.userModel.delete(id);
+        } catch (error) {
+            console.error(error);
+        }
     }
 }

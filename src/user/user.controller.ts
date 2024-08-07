@@ -13,7 +13,7 @@ import { Auth } from './auth/auth';
 @ApiTags("User")
 @Controller('user')
 export class UserController {
-  constructor(private readonly jwt: JwtService, private readonly userService: UserService, private readonly configService: ConfigService) { }
+  constructor(private readonly userService: UserService, private readonly configService: ConfigService) { }
 
   @Post("createUser")
   @ApiOperation({ summary: "회원가입" })
@@ -57,7 +57,6 @@ export class UserController {
   async signIn(@Body('loginId') id: string, @Body("password") password: string, @Body("oauthType") oauthType: string, @Res() res: Response) {
     const token = await this.userService.signIn(id, password, oauthType, null);
     if (token) {
-
       const date = new Date();
       date.setHours(date.getHours() + 1);
       const NODE_ENV = this.configService.getOrThrow('NODE_ENV')
@@ -67,8 +66,6 @@ export class UserController {
       } else {
         res.cookie('token', token, { path: "/" })
       }
-      console.log(token)
-      // res.redirect("https://dropdot.shop");
       return res.status(200).send({ token });
     } else {
       return res.status(400).send();
@@ -79,7 +76,7 @@ export class UserController {
   @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: "로그아웃" })
   async logout(@Req() req: Request, @Res() res: Response) {
-    const { token } = req.cookies;
+    const token = Auth.getToken(req);
     const result = await this.userService.logout(token);
     res.clearCookie('token');
     res.status(HttpStatus.OK);
@@ -91,14 +88,11 @@ export class UserController {
   @ApiOperation({ summary: "getUserInfo" })
   async myPage(@Req() req: Request, @Res() res: Response) {
     try {
-      const token = Auth.getToken(req)
-      console.log(req.cookies.token + "@@@@@@@@@@@@@");
-      console.log(req.headers.authorization.replace("bearer ", "") + "############");
+      const token = Auth.getToken(req);
       if (!token) {
         return res.status(400).send();
       }
-      const info = await this.userService.userInfo(token.replaceAll("Bearer ", ""));
-      console.log(info, "info!!!!!!!!!!");
+      const info = await this.userService.userInfo(token);
       return res.send(info);
     } catch (error) {
       console.error(error);
@@ -130,10 +124,15 @@ export class UserController {
   @Delete("delete")
   @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: "회원 탈퇴" })
-  async deleteUser(@Body("id", ParseIntPipe) id: number, @Res() res: Response) {
-    res.clearCookie('token');
-    res.status(HttpStatus.OK);
-    await this.userService.delete(id);
-    res.send();
+  async deleteUser(@Req() req: Request, @Body("id", ParseIntPipe) id: number, @Res() res: Response) {
+    try {
+      const token = Auth.getToken(req);
+      await this.userService.delete(token);
+      res.clearCookie('token');
+      res.status(HttpStatus.OK);
+      res.send();
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

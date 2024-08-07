@@ -117,13 +117,8 @@ export class UserService {
 
   async userInfo(token: string) {
     try {
-      console.log(token);
-      console.log(process.env.JWT_KEY)
       const { userId } = this.jwt.verify(token);
-      console.log("아이디는 ", userId);
-      const info = await this.userRepo.userInfo(userId);
-      console.log("정보는 ", info);
-      return info;
+      return await this.userRepo.userInfo(userId);
     } catch (error) {
       console.error(error);
     }
@@ -151,9 +146,14 @@ export class UserService {
     }
   }
 
-  async delete(id: number) {
-    //이미지, 작성글, 댓글, 대댓글 삭제
-    await this.userRepo.delete(id);
+  async delete(token: string) {
+    try {
+      //이미지, 작성글, 댓글, 대댓글 삭제
+      const info: any = this.jwt.sign(token);
+      await this.userRepo.delete(info.userId);
+    } catch (error) {
+      console.error(error);
+    }
 
   }
 }
