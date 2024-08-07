@@ -76,6 +76,7 @@ export class UserService {
   async signIn(loginId: string, password: string, oauthType: string, accessToken: string) {
     const data = await this.userRepo.findUser(loginId, oauthType);
     if (!data) return;
+    console.log(data);
     let token = null;
     if (oauthType == "email" && await compare(password, data.password)) {
       token = this.jwt.sign({

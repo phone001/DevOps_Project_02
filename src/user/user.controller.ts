@@ -66,7 +66,7 @@ export class UserController {
       } else {
         res.cookie('token', token, { path: "/" })
       }
-
+      console.log(token)
       // res.redirect("https://dropdot.shop");
       return res.status(200).send({ token });
     } else {
@@ -92,10 +92,10 @@ export class UserController {
     const { token } = req.cookies || req.headers.authorization;
 
     if (!token) {
-
       return res.status(400).send();
     }
     const info = await this.userService.userInfo(token);
+    console.log(info)
     return res.send({ info });
   }
 
