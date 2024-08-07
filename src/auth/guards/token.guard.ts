@@ -22,6 +22,7 @@ export class TokenExistGuard implements CanActivate {
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         const token = Auth.getToken(context.switchToHttp().getRequest());
         console.log("token", token)
+        console.log(typeof token);
         if (token)
             throw new UnauthorizedException("로그인 정보가 있어서 안됨");
 
