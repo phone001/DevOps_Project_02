@@ -91,11 +91,12 @@ export class UserController {
   async myPage(@Req() req: Request, @Res() res: Response) {
     try {
       const token = req.cookies.token || req.headers.authorization.replace("bearer ", "");
-      console.log(token + "@@@@@@@@@@@@@")
+      console.log(req.cookies.token + "@@@@@@@@@@@@@");
+      console.log(req.headers.authorization.replace("bearer ", "") + "############");
       if (!token) {
         return res.status(400).send();
       }
-      const info = await this.userService.userInfo(token);
+      const info = await this.userService.userInfo(token.replaceAll("bearer ", ""));
       console.log(info, "info!!!!!!!!!!");
       return res.send({ info });
     } catch (error) {
