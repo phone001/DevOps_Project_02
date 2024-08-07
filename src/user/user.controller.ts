@@ -89,15 +89,17 @@ export class UserController {
   @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: "getUserInfo" })
   async myPage(@Req() req: Request, @Res() res: Response) {
-    const { token } = req.cookies || req.headers.authorization.replace("bearer ", "");
-
-
-    if (!token) {
-      return res.status(400).send();
+    try {
+      const { token } = req.cookies || req.headers.authorization.replace("bearer ", "");
+      if (!token) {
+        return res.status(400).send();
+      }
+      const info = await this.userService.userInfo(token);
+      console.log(info)
+      return res.send({ info });
+    } catch (error) {
+      console.error(error);
     }
-    const info = await this.userService.userInfo(token);
-    console.log(info)
-    return res.send({ info });
   }
 
   @Put("modify")

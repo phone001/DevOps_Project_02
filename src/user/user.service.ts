@@ -116,9 +116,15 @@ export class UserService {
   }
 
   async userInfo(token: string) {
-    const { userId } = this.jwt.verify(token);
-    const info = await this.userRepo.userInfo(userId);
-    return info;
+    try {
+      const { userId } = this.jwt.verify(token);
+      console.log("아이디는 ", userId);
+      const info = await this.userRepo.userInfo(userId);
+      console.log("정보는 ", info);
+      return info;
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async modify(file: Express.Multer.File, info: any) {
