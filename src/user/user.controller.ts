@@ -91,6 +91,7 @@ export class UserController {
   async myPage(@Req() req: Request, @Res() res: Response) {
     try {
       const { token } = req.cookies || req.headers.authorization.replace("bearer ", "");
+      console.log(token + "@@@@@@@@@@@@@")
       if (!token) {
         return res.status(400).send();
       }
