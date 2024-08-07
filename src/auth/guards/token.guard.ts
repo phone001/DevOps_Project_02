@@ -8,7 +8,7 @@ export class TokenEmptyGuard implements CanActivate {
         let { cookies: { token } } = context.switchToHttp().getRequest();
         const { cookies } = context.switchToHttp().getRequest();
         console.log(context.switchToHttp().getRequest().headers);
-        token = token || context.switchToHttp().getRequest().headers.authorization
+        token = token || context.switchToHttp().getRequest().headers.authorization.replace("Bearer ", "");
 
         console.log("가드에서 찍는 토큰1", context.switchToHttp().getRequest().headers.authorization);
         console.log("가드에서 찍는 토큰2", token);
