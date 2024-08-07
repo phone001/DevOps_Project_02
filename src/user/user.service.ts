@@ -117,6 +117,8 @@ export class UserService {
 
   async userInfo(token: string) {
     try {
+      console.log(token);
+      console.log(process.env.JWT_KEY)
       const { userId } = this.jwt.verify(token);
       console.log("아이디는 ", userId);
       const info = await this.userRepo.userInfo(userId);
