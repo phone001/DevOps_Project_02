@@ -17,7 +17,7 @@ export class PostController {
 
   // 글 작성(생성)
   @Post("/create")
-  // @UseGuards(TokenEmptyGuard)
+  @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: '게시글 생성' })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
@@ -139,7 +139,7 @@ export class PostController {
 
   // 글 수정
   @Put("/:id")
-  // @UseGuards(TokenEmptyGuard)
+  @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: '게시글 수정', description: "게시글 id로 수정" })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
