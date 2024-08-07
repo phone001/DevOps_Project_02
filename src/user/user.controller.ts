@@ -8,7 +8,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { ApiBody, ApiConsumes, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { TokenEmptyGuard, TokenExistGuard } from 'src/auth/guards/token.guard';
 import { ConfigService } from '@nestjs/config';
-import { Auth } from './auth/Auth';
+import { Auth } from './auth/auth';
 
 @ApiTags("User")
 @Controller('user')
