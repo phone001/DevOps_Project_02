@@ -68,7 +68,7 @@ export class UserController {
       }
 
       // res.redirect("https://dropdot.shop");
-      res.status(200).send({ token });
+      return res.status(200).send({ token });
     } else {
       res.status(400).send();
     }
