@@ -90,7 +90,7 @@ export class UserController {
   @ApiOperation({ summary: "getUserInfo" })
   async myPage(@Req() req: Request, @Res() res: Response) {
     try {
-      const { token } = req.cookies || req.headers.authorization.replace("bearer ", "");
+      const token = req.cookies.token || req.headers.authorization.replace("bearer ", "");
       console.log(token + "@@@@@@@@@@@@@")
       if (!token) {
         return res.status(400).send();
