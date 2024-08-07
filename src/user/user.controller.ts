@@ -8,6 +8,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { ApiBody, ApiConsumes, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { TokenEmptyGuard, TokenExistGuard } from 'src/auth/guards/token.guard';
 import { ConfigService } from '@nestjs/config';
+import { Auth } from './auth/Auth';
 
 @ApiTags("User")
 @Controller('user')
@@ -90,7 +91,7 @@ export class UserController {
   @ApiOperation({ summary: "getUserInfo" })
   async myPage(@Req() req: Request, @Res() res: Response) {
     try {
-      const token = req.cookies.token || req.headers.authorization.replace("Bearer ", "");
+      const token = Auth.getToken(req)
       console.log(req.cookies.token + "@@@@@@@@@@@@@");
       console.log(req.headers.authorization.replace("bearer ", "") + "############");
       if (!token) {
