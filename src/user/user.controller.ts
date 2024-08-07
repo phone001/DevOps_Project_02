@@ -99,7 +99,7 @@ export class UserController {
       }
       const info = await this.userService.userInfo(token.replaceAll("Bearer ", ""));
       console.log(info, "info!!!!!!!!!!");
-      return res.send({ info });
+      return res.send(info);
     } catch (error) {
       console.error(error);
     }
