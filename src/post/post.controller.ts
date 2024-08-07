@@ -17,7 +17,7 @@ export class PostController {
 
   // 글 작성(생성)
   @Post("/create")
-  @UseGuards(TokenEmptyGuard)
+  // @UseGuards(TokenEmptyGuard)
   @ApiOperation({ summary: '게시글 생성' })
   @ApiConsumes("multipart/form-data")
   @ApiBody({

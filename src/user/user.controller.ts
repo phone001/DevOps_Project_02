@@ -30,7 +30,7 @@ export class UserController {
       }
     }
   })
-  @UseGuards(TokenExistGuard)
+  //@UseGuards(TokenExistGuard)
   @UseInterceptors(FileInterceptor('file'))
   async create(@UploadedFile() file: Express.Multer.File, @Body() userInfo: CreateUserDto, @Req() req: Request, @Query("token") token: string) {
     let data = null;
@@ -110,7 +110,7 @@ export class UserController {
   })
   @ApiOperation({ summary: "회원정보 수정" })
   @UseInterceptors(FileInterceptor('file'))
-  @UseGuards(TokenEmptyGuard)
+  //@UseGuards(TokenEmptyGuard)
   async modify(@Req() req: Request, @UploadedFile() file: Express.Multer.File,) {
     try {
       const info = req.body;
