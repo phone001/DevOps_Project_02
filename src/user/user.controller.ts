@@ -95,7 +95,7 @@ export class UserController {
         return res.status(400).send();
       }
       const info = await this.userService.userInfo(token);
-      console.log(info)
+      console.log(info, "info!!!!!!!!!!");
       return res.send({ info });
     } catch (error) {
       console.error(error);
