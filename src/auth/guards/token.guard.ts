@@ -6,7 +6,10 @@ import { Auth } from "src/user/auth/auth";
 export class TokenEmptyGuard implements CanActivate {
     constructor(private readonly jwt: JwtService) { }
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-        const token = Auth.getToken(context.switchToHttp().getRequest());
+        //const token = Auth.getToken(context.switchToHttp().getRequest());
+        const { token } = context.switchToHttp().getRequest().cookies;
+        console.log(context.switchToHttp().getRequest().headers);
+        console.log(context.switchToHttp().getRequest().cookies);
 
         if (!token)
             throw new UnauthorizedException("로그인하고 와");
